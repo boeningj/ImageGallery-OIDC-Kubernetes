@@ -90,7 +90,15 @@ The platform consists of an ASP.NET Core MVC client, a protected ASP.NET Core We
 
 Authentication and authorization are implemented using Duende IdentityServer with OpenID Connect (OIDC) and OAuth2 flows.
 
-The ASP.NET Core MVC client authenticates users through the Duende IdentityServer IDP using the Authorization Code Flow. Protected API access is secured using OAuth2 reference access tokens validated through token introspection.
+The ASP.NET Core MVC client authenticates users through the Duende IdentityServer IDP using the Authorization Code Flow.
+
+The protected API supports multiple OAuth2 token validation modes, configurable through environment-based settings:
+
+- Reference tokens validated through OAuth2 introspection
+- Self-contained JWT access tokens validated locally
+- Local development JWTs using `dotnet user-jwts`
+
+The platform defaults to OAuth2 reference tokens to demonstrate introspection-based validation patterns commonly used in distributed systems and microservices environments.
 
 Authorization is enforced at multiple levels throughout the platform:
 
