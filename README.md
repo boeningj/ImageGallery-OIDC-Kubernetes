@@ -263,11 +263,257 @@ docker compose up --build
 
 ## Kubernetes Deployment
 
+The platform supports Kubernetes-based deployment using Docker Desktop Kubernetes for local orchestration and testing.
+
+The Kubernetes environment demonstrates:
+
+- Container orchestration
+- Service discovery
+- Environment-based configuration
+- Kubernetes ConfigMaps
+- Kubernetes Secrets
+- Ingress-based routing
+- HTTPS/TLS termination
+- Multi-service workload deployment
+
+### Kubernetes Architecture
+
+The Kubernetes deployment consists of:
+
+- ASP.NET Core MVC client deployment
+- ASP.NET Core Web API deployment
+- Duende IdentityServer deployment
+- ClusterIP internal services
+- NGINX ingress routing
+- Shared configuration using ConfigMaps
+- Sensitive configuration using Kubernetes Secrets
+
+### Kubernetes Manifests
+
+Kubernetes manifests are organized under:
+
+```text
+k8s/
+```
+
+Environment-specific manifests include:
+
+```text
+k8s/local/
+k8s/aws/
+```
+
+### Local Kubernetes Deployment
+
+Local Kubernetes deployment uses Docker Desktop Kubernetes.
+
+Deploy the local environment:
+
+```powershell
+kubectl apply -f k8s/local/
+```
+
+Verify workloads:
+
+```powershell
+kubectl get pods -n imagegallery
+```
+
+Verify services:
+
+```powershell
+kubectl get svc -n imagegallery
+```
+
+### Kubernetes Features Demonstrated
+
+- Environment variable injection using ConfigMaps and Secrets
+- Internal service-to-service communication
+- HTTPS ingress routing
+- Containerized ASP.NET Core workloads
+- Kubernetes namespace isolation
+- Persistent signing key handling for IdentityServer
+- Health probe configuration for containerized services
+
 ## AWS EKS Deployment
+
+The platform is publicly hosted on Amazon Web Services (AWS) using Amazon Elastic Kubernetes Service (EKS).
+
+The AWS deployment demonstrates a production-style cloud-native architecture including:
+
+- Amazon EKS Kubernetes orchestration
+- AWS Application Load Balancer (ALB) ingress
+- HTTPS/TLS termination using AWS Certificate Manager (ACM)
+- Public DNS routing using Cloudflare
+- Infrastructure as Code using Terraform
+- Kubernetes ConfigMaps and Secrets
+- Containerized ASP.NET Core workloads
+
+### AWS Traffic Flow Architecture
+
+The following diagram illustrates how public internet traffic is routed through Cloudflare, AWS infrastructure, and Kubernetes ingress resources before reaching the containerized ASP.NET Core workloads running inside Amazon EKS.
+
+![AWS EKS Public Traffic Flow](docs/AWS-EKS-PublicTrafficFlow.png)
+
+HTTPS/TLS termination is handled by the AWS Application Load Balancer using AWS Certificate Manager (ACM) certificates. Traffic is then routed into the Kubernetes cluster through ingress resources managed by the AWS Load Balancer Controller.
+
+### Infrastructure Provisioning
+
+AWS cloud infrastructure is provisioned and managed using Terraform Infrastructure as Code (IaC).
+
+Terraform resources include:
+
+- Amazon EKS cluster
+- EC2-based worker node groups
+- VPC networking
+- Security groups
+- IAM roles and policies
+- ALB ingress integration
+
+Terraform configuration is located under:
+
+```text
+infra/terraform/aws/
+```
+
+### Kubernetes Deployment
+
+AWS-specific Kubernetes manifests are located under:
+
+```text
+k8s/aws/
+```
+
+Deployment includes:
+
+- MVC client deployment
+- ImageGallery API deployment
+- Duende IdentityServer deployment
+- Kubernetes Services
+- ConfigMaps
+- Kubernetes Secrets
+- ALB ingress configuration
+
+### HTTPS & Ingress
+
+The platform uses AWS Load Balancer Controller with Kubernetes ingress resources to provision an AWS Application Load Balancer dynamically.
+
+HTTPS certificates are managed through AWS Certificate Manager (ACM).
+
+Ingress routing supports:
+
+- HTTPS termination
+- Path-based routing
+- Public internet access
+- OIDC redirect compatibility
+
+### Operational Lessons Learned
+
+The AWS deployment process exposed several real-world cloud-native engineering challenges including:
+
+- Kubernetes ingress configuration
+- OIDC redirect URI handling behind reverse proxies
+- HTTPS/TLS forwarding behavior
+- Internal vs external service addressing
+- Container networking differences between Windows and Linux
+- Kubernetes Secret and ConfigMap injection
+- Persistent IdentityServer signing key management
+- Linux container filesystem case sensitivity
 
 ## Infrastructure
 
+The repository is organized to support multiple deployment environments and infrastructure layers, ranging from local ASP.NET Core development to fully cloud-hosted Kubernetes workloads on AWS EKS.
+
+### Repository Structure
+
+```text
+ImageGallery.API/
+ImageGallery.Client/
+ImageGallery.IDP/
+ImageGallery.Authorization/
+
+infra/terraform/aws/
+
+k8s/local/
+k8s/aws/
+
+nginx/
+
+env/templates/
+
+docker-compose.yaml
+```
+
+| Path | Description |
+|---|---|
+| `ImageGallery.API/` | Secured ASP.NET Core Web API |
+| `ImageGallery.Client/` | ASP.NET Core MVC client application |
+| `ImageGallery.IDP/` | Duende IdentityServer OIDC/OAuth2 provider |
+| `ImageGallery.Authorization/` | Shared authorization policies and requirements |
+| `infra/terraform/aws/` | AWS Terraform Infrastructure as Code |
+| `k8s/local/` | Local Kubernetes manifests |
+| `k8s/aws/` | AWS EKS Kubernetes manifests |
+| `nginx/` | Local reverse proxy configuration |
+| `env/templates/` | Sanitized environment configuration templates |
+| `docker-compose.yaml` | Docker Compose orchestration |
+
+### Infrastructure Design Goals
+
+The platform infrastructure was designed to demonstrate:
+
+- Environment-specific deployment strategies
+- Infrastructure as Code (IaC)
+- Secure configuration management
+- Cloud-native application hosting
+- Kubernetes orchestration patterns
+- HTTPS ingress and reverse proxy architecture
+- Environment-driven application configuration
+
+### Configuration Management
+
+Configuration is separated by deployment environment using:
+
+- Local environment files
+- Docker environment files
+- Kubernetes ConfigMaps
+- Kubernetes Secrets
+- Terraform-managed infrastructure resources
+
+Sanitized configuration templates are included to simplify onboarding and local development setup without exposing secrets.
+
 ## Security Notes
+
+The platform was designed to demonstrate modern authentication and authorization patterns commonly used in a cloud-native ASP.NET Core application.
+
+Security-focused implementation details include:
+
+- OpenID Connect (OIDC) authentication using Duende IdentityServer
+- OAuth2-protected APIs
+- Support for both reference tokens and JWT access tokens
+- OAuth2 token introspection support
+- Claims-based and role-based authorization
+- Resource ownership validation using custom authorization handlers
+- HTTPS/TLS termination using AWS Certificate Manager (ACM)
+- Kubernetes Secret-based sensitive configuration management
+- Environment-specific configuration isolation
+- Fail-fast startup validation for invalid authentication configuration
+
+### JWT Validation
+
+When operating in JWT validation mode, the API validates the token type header (`at+jwt`) to reduce the risk of JWT confusion attacks.
+
+### Development Environment Notes
+
+Development environments use self-signed certificates and simplified secrets management intended for local development and educational purposes.
+
+Production-grade deployments should additionally consider:
+
+- Managed database services
+- External secret providers
+- Centralized logging and monitoring
+- IdentityServer persistent storage
+- Automated certificate rotation
+- Vulnerability scanning and image hardening
 
 ## Screenshots
 
