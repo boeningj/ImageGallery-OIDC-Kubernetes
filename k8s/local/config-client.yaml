@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: imagegallery-client-config
+  namespace: imagegallery
+data:
+  # ========================================
+  # AUTHENTICATION (CLIENT)
+  # ========================================
+  Authentication__Authority: https://imagegallery.local/idp
+
+  Authentication__RequireHttpsMetadata: "true"
+
+  Authentication__ClientId: imagegalleryclient  
+
+  # ========================================
+  # CLIENT → API
+  # ========================================
+  ImageGalleryAPIRoot: http://svc-imagegallery-api:5075

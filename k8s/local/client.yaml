@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-imagegallery-client
+  namespace: imagegallery
+spec:
+  type: ClusterIP
+  selector:
+    app: imagegallery-client
+  ports:
+    - port: 7184
+      targetPort: 7184
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-imagegallery-client
+  namespace: imagegallery
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: imagegallery-client
+  template:
+    metadata:
+      labels:
+        app: imagegallery-client
+    spec:
+      hostAliases:
+        - ip: "10.106.37.136"
+          hostnames:
+            - "imagegallery.local"
+      containers:
+        - name: imagegallery-client
+          image: imagegallery-client
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 7184
+
+          envFrom:
+            - configMapRef:
+                name: imagegallery-common-config
+            - configMapRef:
+                name: imagegallery-client-config
+            - secretRef:
+                name: imagegallery-common-secrets
+
+          volumeMounts:
+            - name: dp-keys
+              mountPath: /home/app/.aspnet/DataProtection-Keys
+
+          startupProbe:
+            httpGet:
+              path: /
+              port: 7184
+            failureThreshold: 30
+            periodSeconds: 2
+
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 7184
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 7184
+            initialDelaySeconds: 15
+            periodSeconds: 10
+
+      volumes:
+        - name: dp-keys
+          emptyDir: {}

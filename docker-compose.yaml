@@ -1,0 +1,69 @@
+name: imagegallery
+
+networks:
+  imagegallery-network:
+    name: imagegallery-network
+
+services:
+
+  imagegallery-idp:
+    image: imagegallery-idp
+    build:
+      context: .
+      dockerfile: ImageGallery.IDP/Dockerfile
+    env_file:
+      - ./env/docker.env
+    networks:
+      - imagegallery-network
+    volumes:
+      - ./ImageGallery.IDP/keys:/app/keys
+      - ${USERPROFILE}/.aspnet/https:/https:ro
+    environment:
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/imagegallery-idp.pfx      
+
+  imagegallery-api:
+    image: imagegallery-api
+    build:
+      context: .
+      dockerfile: ImageGallery.API/Dockerfile
+    env_file:
+      - ./env/docker.env
+    networks:
+      - imagegallery-network
+    ports:
+      - "7075:5075"
+    depends_on:
+      - imagegallery-idp
+
+  imagegallery-client:
+    image: imagegallery-client
+    build:
+      context: .
+      dockerfile: ImageGallery.Client/Dockerfile
+    env_file:
+      - ./env/docker.env
+    networks:
+      - imagegallery-network
+    ports:
+      - "7184:7184"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "localhost:host-gateway"   # critical for OIDC authority
+    depends_on:
+    - imagegallery-idp
+    - imagegallery-api
+
+  imagegallery-proxy:
+    image: nginx
+    networks:
+      - imagegallery-network
+    ports:
+      - "5000:443"
+      - "5001:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/certs:/etc/nginx/certs
+    depends_on:
+      - imagegallery-client
+      - imagegallery-api
+      - imagegallery-idp

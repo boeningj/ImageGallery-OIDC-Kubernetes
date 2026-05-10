@@ -1,0 +1,1 @@
+powershell -NoProfile -ExecutionPolicy Bypass -File "Start-All-ImageGalleryV2.ps1"

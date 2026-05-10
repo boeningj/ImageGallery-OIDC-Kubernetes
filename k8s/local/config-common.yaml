@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: imagegallery-common-config
+  namespace: imagegallery
+data:
+  # ========================================
+  # ENVIRONMENT
+  # ========================================
+  ASPNETCORE_ENVIRONMENT: Docker
+  TRUST_FORWARD_HEADERS: "true"
+
+  # ========================================
+  # IDENTITY PROVIDER (PUBLIC URL)
+  # ========================================
+  # Used for:
+  # - OIDC issuer (iss claim)
+  # - browser redirects
+  # - discovery document returned to clients
+  #
+  # MUST match what the browser uses (Ingress later)
+  IDP_PUBLIC_ORIGIN: https://imagegallery.local/idp
+
+  # ========================================
+  # CLIENT URLS (USED BY IDP)
+  # ========================================
+  # Used for redirect URIs and post-logout redirects
+  CLIENTURLS__BASEURL: https://imagegallery.local
+
+  # ========================================
+  # OIDC SECURITY (DEV ONLY)
+  # ========================================
+  # Allows containers to call HTTPS endpoints with self-signed certs
+  # DO NOT use in production
+  OIDC__DISABLECERTVALIDATION: "true"

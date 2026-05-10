@@ -1,0 +1,69 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: imagegallery-ingress
+  namespace: imagegallery
+  annotations:
+    # ============================================================
+    # USE AWS ALB INSTEAD OF NGINX
+    # ============================================================
+    # (Old annotation removed — using spec.ingressClassName instead)
+
+    # ============================================================
+    # PUBLIC INTERNET-FACING LOAD BALANCER
+    # ============================================================
+    alb.ingress.kubernetes.io/scheme: internet-facing
+
+    # ============================================================
+    # ROUTE TRAFFIC DIRECTLY TO POD IPS (BEST FOR EKS)
+    # ============================================================
+    alb.ingress.kubernetes.io/target-type: ip
+
+    # ============================================================
+    # ENABLE HTTP + HTTPS LISTENERS
+    # ============================================================
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+
+    # ============================================================
+    # FORCE HTTP → HTTPS REDIRECT
+    # ============================================================
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+
+    # ============================================================
+    # ACM CERTIFICATE ARN
+    # ============================================================
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-2:323146836950:certificate/92291b36-831b-4292-bda8-d83c58f7eb88
+
+spec:
+  # ============================================================
+  # REQUIRED FOR AWS LOAD BALANCER CONTROLLER
+  # ============================================================
+  ingressClassName: alb
+
+  rules:
+    - host: imagegallery.boeninglabs.net
+      http:
+        paths:
+          - path: /idp
+            pathType: Prefix
+            backend:
+              service:
+                name: svc-imagegallery-idp
+                port:
+                  number: 5001
+
+          - path: /Images
+            pathType: Prefix
+            backend:
+              service:
+                name: svc-imagegallery-api
+                port:
+                  number: 5075
+
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: svc-imagegallery-client
+                port:
+                  number: 7184

@@ -1,0 +1,47 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: imagegallery-ingress
+  namespace: imagegallery
+  annotations:
+    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
+    #nginx.ingress.kubernetes.io/x-forwarded-prefix: "/idp"
+    #nginx.ingress.kubernetes.io/rewrite-target: /$2
+    #force http → https
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  #tell ingress which cert to use
+  tls:
+    - hosts:
+        - imagegallery.local
+      secretName: imagegallery-tls
+  rules:
+    - host: imagegallery.local
+      http:
+        paths:
+          #- path: /idp(/|$)(.*)
+          #  pathType: ImplementationSpecific
+          - path: /idp
+            pathType: Prefix
+            backend:
+              service:
+                name: svc-imagegallery-idp
+                port:
+                  number: 5001
+
+          - path: /Images
+            pathType: Prefix
+            backend:
+              service:
+                name: svc-imagegallery-api
+                port:
+                  number: 5075
+
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: svc-imagegallery-client
+                port:
+                  number: 7184

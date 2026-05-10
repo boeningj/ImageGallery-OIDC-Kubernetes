@@ -1,0 +1,93 @@
+# -----------------------------
+# Environment configuration
+# -----------------------------
+env/
+
+# -----------------------------
+# Kubernetes secrets
+# -----------------------------
+k8s/**/secret*.yaml
+k8s/**/*secret*.yaml
+
+# Keep secret templates
+!k8s/templates/*.template.yaml
+
+# -----------------------------
+# ASP.NET user secrets
+# -----------------------------
+secrets.json
+
+# -----------------------------
+# Terraform
+# -----------------------------
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+terraform.tfvars
+terraform.tfvars.json
+tfplan
+*.tfplan
+plan.txt
+*.plan
+*-for-ref.txt
+
+# -----------------------------
+# AWS / Kubernetes credentials
+# -----------------------------
+.aws/
+kubeconfig*
+*.pem
+
+# -----------------------------
+# Build output
+# -----------------------------
+bin/
+obj/
+publish/
+**/publish/
+*.zip
+
+# -----------------------------
+# Visual Studio / Rider
+# -----------------------------
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# -----------------------------
+# Logs
+# -----------------------------
+*.log
+
+# -----------------------------
+# OS files
+# -----------------------------
+.DS_Store
+Thumbs.db
+
+# -----------------------------
+# Local NGINX TLS certificates
+# -----------------------------
+nginx/certs/
+
+# -----------------------------
+# ASP.NET Data Protection Keys
+# -----------------------------
+ImageGallery.IDP/dpkeys/
+
+# -----------------------------
+# IdentityServer signing keys
+# -----------------------------
+ImageGallery.IDP/keys/
+
+# -----------------------------
+# Temporary testing artifacts
+# -----------------------------
+ImageGallery.API/Test Tokens.txt

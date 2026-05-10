@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: imagegallery-api-config
+  namespace: imagegallery
+data:
+  # ========================================
+  # TOKEN VALIDATION MODE
+  # ========================================
+  TokenSettings__Mode: Reference
+
+  # ========================================
+  # INTERNAL IDENTITY (API → IDP)
+  # ========================================
+  InternalIdentity__Authority: http://svc-imagegallery-idp:5001/idp
+  InternalIdentity__RequireHttpsMetadata: "false"
+
+  # ========================================
+  # API CLIENT (INTROSPECTION)
+  # ========================================
+  Authentication__ApiClientId: imagegalleryapi  
+
+  # ========================================
+  # DATABASE
+  # ========================================
+  ConnectionStrings__ImageGalleryDBConnectionString: Data Source=/app/ImageGallery.db

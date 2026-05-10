@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: imagegallery-client-config
+  namespace: imagegallery
+data:
+  # ========================================
+  # AUTHENTICATION (CLIENT)
+  # ========================================
+  #Authentication__Authority: http://k8s-imagegal-imagegal-982dd04a4b-29622117.us-east-2.elb.amazonaws.com/idp
+  Authentication__Authority: https://imagegallery.boeninglabs.net/idp
+
+  Authentication__RequireHttpsMetadata: "false"
+
+  Authentication__ClientId: imagegalleryclient  
+
+  # ========================================
+  # CLIENT → API
+  # ========================================
+  ImageGalleryAPIRoot: http://svc-imagegallery-api:5075
