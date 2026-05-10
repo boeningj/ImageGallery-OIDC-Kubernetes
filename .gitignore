@@ -1,7 +1,9 @@
 # -----------------------------
 # Environment configuration
 # -----------------------------
-env/
+env/*
+!env/templates/
+!env/templates/*.env
 
 # -----------------------------
 # Kubernetes secrets
