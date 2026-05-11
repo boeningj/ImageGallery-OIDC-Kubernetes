@@ -1,5 +1,7 @@
 # ImageGallery-OIDC-Kubernetes
 
+Cloud-native ASP.NET Core OAuth2/OIDC platform deployed to Kubernetes and AWS EKS.
+
 ## Overview
 
 ImageGallery is an ASP.NET Core application that allows authenticated users to browse, upload, and manage image content through a secure cloud-native platform.
@@ -517,11 +519,67 @@ Production-grade deployments should additionally consider:
 
 ## Screenshots
 
+### OpenID Connect Login
+
+Duende IdentityServer authentication flow used by the MVC client application.
+
+<p align="center">
+  <img src="docs/screenshots/login.png" width="700" />
+</p>
+
+### OAuth2 Consent & Claims
+
+Duende IdentityServer consent flow demonstrating OAuth2 scopes, claims-based identity information, and delegated API permissions.
+
+<p align="center">
+  <img src="docs/screenshots/emma-consent.png" width="700" />
+</p>
+
+### Authorized User Experience (Emma)
+
+Emma is assigned the `PayingUser` role and required authorization claims, allowing image upload and management operations.
+
+<p align="center">
+  <img src="docs/screenshots/emma-authorized.png" width="700" />
+</p>
+
+### Restricted Authorization Experience (David)
+
+David can browse image content but does not satisfy the authorization requirements needed for image upload operations.
+
+<p align="center">
+  <img src="docs/screenshots/david-restricted.png" width="700" />
+</p>
+
 ## Lessons Learned
 
+Building and deploying the platform across local development, Docker, Kubernetes, and AWS EKS environments exposed several real-world engineering and operational challenges.
+
+Key lessons learned included:
+
 - Linux containers and Kubernetes deployments are case-sensitive, which exposed path inconsistencies that worked on Windows development environments but failed inside Docker and Kubernetes.
+- OAuth2/OIDC applications deployed behind reverse proxies require careful handling of external vs internal URLs, especially for redirect URIs and token validation endpoints.
+- Docker container networking differs significantly from local host networking, requiring explicit handling of internal service discovery and hostname resolution.
+- Kubernetes ingress and AWS ALB routing introduce additional complexity around HTTPS forwarding, path handling, and TLS termination behavior.
+- OAuth2 reference tokens require runtime token introspection and introduce different operational considerations compared to self-contained JWT access tokens.
+- Kubernetes ConfigMaps and Secrets greatly simplify environment-specific configuration management compared to local environment variable handling.
+- IdentityServer signing key persistence becomes critical in containerized and distributed environments to prevent token validation failures during redeployments.
+- Infrastructure as Code using Terraform improves repeatability and consistency for cloud infrastructure provisioning.
+- Cloud-native deployments require stronger observability and troubleshooting practices compared to traditional local development workflows.
+- Running applications successfully in Docker does not guarantee successful Kubernetes deployment due to differences in networking, ingress, configuration injection, and orchestration behavior.
 
 ## Future Improvements
+
+Potential future enhancements for the platform include:
+
+- Migrating the ImageGallery API from SQLite to a managed relational database platform such as SQL Server or Amazon RDS to support horizontal scaling and multi-replica deployments.
+- Persisting Duende IdentityServer signing keys and operational data using durable shared storage instead of an in-memory configuration.
+- Implementing centralized logging and observability using tools such as CloudWatch, Prometheus, or Grafana.
+- Implementing automated container vulnerability scanning and image hardening practices.
+- Implementing shared ASP.NET Core Data Protection key storage using Redis or another distributed provider to support reliable multi-replica deployments for the MVC client and IdentityServer workloads.
+- Further automating cloud deployment workflows by integrating DNS management, ACM certificate provisioning, and Kubernetes workload deployment into Infrastructure as Code and CI/CD pipelines.
+- Supporting horizontal pod autoscaling (HPA) for Kubernetes workloads.
+- Implementing external secret management solutions such as AWS Secrets Manager or HashiCorp Vault.
 
 ## Author
 
