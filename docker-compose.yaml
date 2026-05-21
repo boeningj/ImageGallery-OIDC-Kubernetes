@@ -50,8 +50,8 @@ services:
       - "host.docker.internal:host-gateway"
       - "localhost:host-gateway"   # critical for OIDC authority
     depends_on:
-    - imagegallery-idp
-    - imagegallery-api
+      - imagegallery-idp
+      - imagegallery-api
 
   imagegallery-proxy:
     image: nginx
