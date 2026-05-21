@@ -17,7 +17,8 @@ builder.Services.AddControllers().AddJsonOptions(configure => configure.JsonSeri
 
 builder.Services.AddDbContext<GalleryContext>(options =>
 {
-    options.UseSqlite(builder.Configuration["ConnectionStrings:ImageGalleryDBConnectionString"]);
+    //options.UseSqlite(builder.Configuration["ConnectionStrings:ImageGalleryDBConnectionString"]);
+    options.UseSqlServer(builder.Configuration["ConnectionStrings:ImageGalleryDBConnectionString"]);
 });
 
 // register the repository
