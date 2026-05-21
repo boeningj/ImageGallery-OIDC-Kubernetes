@@ -20,7 +20,8 @@ namespace ImageGallery.Client.Controllers
         }
 
         [Authorize]
-        public async Task Logout()
+        [HttpPost]
+        public async Task<IActionResult> Logout()
         {
             var client = _httpClientFactory.CreateClient("IDPClient");
 
@@ -65,6 +66,8 @@ namespace ImageGallery.Client.Controllers
             // Redirects to the IDP linked to scheme "OpenIdConnectDefaults.AuthenticationScheme" (oidc) so
             // it can clear its own session/cookie
             await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+
+            return new EmptyResult(); 
         }
 
         public IActionResult AccessDenied()

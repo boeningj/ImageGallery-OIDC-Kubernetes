@@ -35,8 +35,14 @@
                         }
                         @if (User?.Identity?.IsAuthenticated == true)
                         {
-                        <li>
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Authentication" asp-action="Logout">Logout</a>
+                        <li class="nav-item">
+                            <form asp-area=""
+                                asp-controller="Authentication"
+                                asp-action="Logout"
+                                method="post"
+                                class="d-inline">
+                                <button type="submit" class="nav-link btn btn-link text-dark border-0">Logout</button>
+                            </form>
                         </li>
                         }
                     </ul>

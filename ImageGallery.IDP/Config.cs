@@ -59,7 +59,7 @@ public static class Config
                 // See ImageGallery.API Program.cs for matching TokenSettings:Mode configuration
                 AllowOfflineAccess = true, //required for refresh tokens
                 UpdateAccessTokenClaimsOnRefresh = true, //this will ensure that claims in the access token are updated on a refresh
-                AccessTokenLifetime = 120, //default is 1 hour
+                //AccessTokenLifetime = 120, //default is 1 hour so uncomment this line to test what happens when access tokens expire
                 //AuthorizationCodeLifetime = 300, //defalut is 5 minutes
                 //IdentityTokenLifetime = 300, //default is 5 minutes
                 RedirectUris = { $"{baseUrl}/signin-oidc" },
