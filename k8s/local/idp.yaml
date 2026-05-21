@@ -40,6 +40,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: imagegallery-common-config
+            - secretRef:
+                name: imagegallery-common-secrets
 
           # Force HTTP only (disable HTTPS requirement)
           env:

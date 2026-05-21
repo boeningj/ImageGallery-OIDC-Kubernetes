@@ -18,9 +18,4 @@ data:
   # ========================================
   # API CLIENT (INTROSPECTION)
   # ========================================
-  Authentication__ApiClientId: imagegalleryapi  
-
-  # ========================================
-  # DATABASE
-  # ========================================
-  ConnectionStrings__ImageGalleryDBConnectionString: Data Source=/app/ImageGallery.db
+  Authentication__ApiClientId: imagegalleryapi
