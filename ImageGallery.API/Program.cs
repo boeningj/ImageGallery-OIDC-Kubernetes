@@ -171,4 +171,10 @@ app.MapControllers();
 app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = check => check.Name == "self" });
 app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = check => check.Name != "self" });
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<GalleryContext>();
+    dbContext.Database.Migrate();
+}
+
 app.Run();
