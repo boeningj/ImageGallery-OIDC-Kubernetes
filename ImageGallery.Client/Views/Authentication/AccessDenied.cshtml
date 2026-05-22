@@ -1,4 +1,14 @@
 <div class="container">
     <div class="h3">Woops, looks like you're not authorized to view this page.</div>
-    <div>Would you prefer to <a asp-controller="Authentication" asp-action="Logout">log in as someone else</a>?</div>
+
+    <div>
+        Would you prefer to
+        <form asp-controller="Authentication"
+              asp-action="Logout"
+              method="post"
+              class="d-inline">
+            <button type="submit" class="btn btn-link p-0 align-baseline">log in as someone else</button>
+        </form>
+        ?
+    </div>
 </div>
