@@ -59,13 +59,13 @@ resource "aws_security_group" "imagegallery_rds_sg" {
   name        = "imagegallery-rds-sg"
   description = "Security group for ImageGallery SQL Server RDS"
   vpc_id      = module.vpc.vpc_id
-
+  
   ingress {
-    description     = "SQL Server access from EKS worker nodes"
+    description     = "SQL Server access from shared application runtime SG"
     from_port       = 1433
     to_port         = 1433
     protocol        = "tcp"
-    security_groups = [module.eks.node_security_group_id]
+    security_groups = [aws_security_group.app_runtime_sg.id]
   }
 
   egress {

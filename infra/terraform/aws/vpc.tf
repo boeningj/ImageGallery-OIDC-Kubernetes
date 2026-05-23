@@ -16,3 +16,24 @@ module "vpc" {
     Environment = "dev"
   }
 }
+
+# ============================================================
+# Shared Application Runtime Security Group
+# ============================================================
+# This security group represents trusted application runtime
+# workloads (such as EKS nodes or Kubernetes pods) that are
+# allowed to communicate with shared infrastructure services
+# such as RDS.
+#
+# The goal is to decouple foundation infrastructure from
+# runtime-specific resources like the EKS node security group.
+# ============================================================
+resource "aws_security_group" "app_runtime_sg" {
+  name        = "imagegallery-app-runtime-sg"
+  description = "Shared security group for application runtime workloads"
+  vpc_id      = module.vpc.vpc_id
+
+  tags = {
+    Name = "imagegallery-app-runtime-sg"
+  }
+}

@@ -124,6 +124,8 @@ module "eks" {
     default = {
       instance_types = ["t3.medium"]
 
+      vpc_security_group_ids = [aws_security_group.app_runtime_sg.id]
+      
       # ============================================================
       # NODE GROUP AMI (Amazon Machine Image) CONFIGURATION
       # ============================================================
