@@ -14,6 +14,9 @@ Terraform resources include:
 - Security groups
 - IAM roles and policies
 - ALB ingress integration
+- Amazon RDS for SQL Server
+- RDS subnet groups
+- Database security groups
 
 Terraform configuration is located under:
 
@@ -38,6 +41,7 @@ Deployment includes:
 - ConfigMaps
 - Kubernetes Secrets
 - ALB ingress configuration
+- Managed relational persistence using Amazon RDS for SQL Server
 
 ## HTTPS & Ingress
 

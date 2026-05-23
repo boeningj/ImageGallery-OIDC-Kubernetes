@@ -9,6 +9,7 @@ The Docker environment simulates a production-style reverse proxy architecture w
 - NGINX handles HTTPS/TLS termination
 - IdentityServer runs behind a reverse proxy using the `/idp` path base
 - Containers communicate internally over a dedicated Docker network
+- Application services use SQL Server-backed persistent storage through environment-based connection string configuration
 - Browser traffic is routed through HTTPS endpoints exposed by NGINX
 
 ## Environment Configuration

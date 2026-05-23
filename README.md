@@ -26,6 +26,9 @@ Supported deployment environments include:
 - Kubernetes
 - AWS EKS
 - Terraform
+- Amazon RDS for SQL Server
+- SQL Server
+- EF Core Migrations
 - NGINX
 - AWS ALB + ACM
 - Cloudflare DNS
@@ -49,12 +52,15 @@ Supported deployment environments include:
 - HTTPS ingress configuration
 - Terraform Infrastructure as Code
 - Kubernetes ConfigMaps and Secrets
+- Amazon RDS for SQL Server
+- SQL Server
+- EF Core Migrations
 
 ### Application Features
 
 - ASP.NET Core MVC client
 - Protected ASP.NET Core Web API
-- Secure image upload and management
+- Persistent image metadata storage using Amazon RDS SQL Server
 
 ## Live Demo
 
@@ -88,9 +94,9 @@ The ImageGallery MVC client application is publicly hosted on AWS EKS and can be
 
 ## Architecture
 
-The following diagram illustrates the high-level architecture of the ImageGallery platform running on AWS EKS.
+The following diagram illustrates the high-level architecture of the ImageGallery platform running on AWS EKS, including managed SQL Server persistence using Amazon RDS.
 
-![Architecture Diagram](docs/ImageGallery-Architecture-Diagram.png)
+![Architecture Diagram](docs/ImageGallery-Architecture-Diagram-RDS.png)
 
 ## Infrastructure
 
@@ -189,6 +195,7 @@ The platform can be run locally using standard ASP.NET Core hosting without Dock
 - .NET 8 SDK
 - PowerShell
 - ASP.NET Core HTTPS development certificates
+- SQL Server
 
 ### Environment Configuration
 
@@ -205,6 +212,16 @@ Copy-Item env/templates/local.template.env env/local.env
 ```
 
 Replace placeholder values with local development settings before starting the platform.
+
+### Local Database
+
+Local development currently uses a local SQL Server instance for persistent storage.
+
+The default development configuration expects SQL Server to be available at:
+
+```text
+localhost,1433
+```
 
 ### Starting The Platform
 
@@ -312,6 +329,7 @@ The AWS deployment demonstrates a production-style cloud-native architecture inc
 - Infrastructure as Code using Terraform
 - Kubernetes ConfigMaps and Secrets
 - Containerized ASP.NET Core workloads
+- Amazon RDS for SQL Server managed persistence
 
 ### AWS Traffic Flow Architecture
 
@@ -367,6 +385,7 @@ Key lessons learned included:
 - Kubernetes ingress and AWS ALB routing introduce additional complexity around HTTPS forwarding, path handling, and TLS termination behavior.
 - OAuth2 reference tokens require runtime token introspection and introduce different operational considerations compared to self-contained JWT access tokens.
 - Kubernetes ConfigMaps and Secrets greatly simplify environment-specific configuration management compared to local environment variable handling.
+- Migrating from container-local SQLite storage to Amazon RDS SQL Server highlighted the importance of shared durable persistence for Kubernetes workloads and multi-replica cloud-native deployments.
 - IdentityServer signing key persistence becomes critical in containerized and distributed environments to prevent token validation failures during redeployments.
 - Infrastructure as Code using Terraform improves repeatability and consistency for cloud infrastructure provisioning.
 - Cloud-native deployments require stronger observability and troubleshooting practices compared to traditional local development workflows.
@@ -376,12 +395,12 @@ Key lessons learned included:
 
 Potential future enhancements for the platform include:
 
-- Migrating the ImageGallery API from SQLite to a managed relational database platform such as SQL Server or Amazon RDS to support horizontal scaling and multi-replica deployments.
 - Persisting Duende IdentityServer signing keys and operational data using durable shared storage instead of an in-memory configuration.
 - Implementing centralized logging and observability using tools such as CloudWatch, Prometheus, or Grafana.
 - Implementing automated container vulnerability scanning and image hardening practices.
 - Implementing shared ASP.NET Core Data Protection key storage using Redis or another distributed provider to support reliable multi-replica deployments for the MVC client and IdentityServer workloads.
-- Further automating cloud deployment workflows by integrating DNS management, ACM certificate provisioning, and Kubernetes workload deployment into Infrastructure as Code and CI/CD pipelines.
+- Implementing GitHub Actions CI/CD pipelines for automated container builds, ECR publishing, and Kubernetes deployments.
+- Further automating cloud infrastructure and deployment workflows by integrating DNS management, ACM certificate provisioning, and Kubernetes workload deployment into Infrastructure as Code and CI/CD pipelines.
 - Supporting horizontal pod autoscaling (HPA) for Kubernetes workloads.
 - Implementing external secret management solutions such as AWS Secrets Manager or HashiCorp Vault.
 

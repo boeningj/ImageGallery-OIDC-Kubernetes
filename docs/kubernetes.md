@@ -37,4 +37,4 @@ k8s/aws/
 - Containerized ASP.NET Core workloads
 - Kubernetes namespace isolation
 - Persistent signing key handling for IdentityServer
-- Health probe configuration for containerized services
+- Kubernetes readiness and liveness health probes
