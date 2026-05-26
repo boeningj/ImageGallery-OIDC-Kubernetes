@@ -1,6 +1,6 @@
-## Future Terraform root module for disposable runtime infrastructure.
+## Terraform root module for disposable runtime infrastructure.
 
-This layer will contain Kubernetes and application runtime resources including:
+This layer contains Kubernetes and application runtime resources that can be independently destroyed and recreated without impacting persistent foundation infrastructure.
 
 - Amazon EKS cluster
 - EKS managed node groups
