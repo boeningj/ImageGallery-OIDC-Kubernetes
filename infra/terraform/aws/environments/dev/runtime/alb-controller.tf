@@ -121,7 +121,7 @@ resource "helm_release" "alb_controller" {
 
   set {
     name  = "vpcId"
-    value = module.vpc.vpc_id
+    value = data.terraform_remote_state.foundation.outputs.vpc_id
   }
 
   set {

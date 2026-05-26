@@ -5,8 +5,8 @@ module "eks" {
   cluster_name    = "imagegallery-cluster"
   cluster_version = "1.30"
 
-  vpc_id     = module.vpc.vpc_id
-  subnet_ids = module.vpc.private_subnets
+  vpc_id     = data.terraform_remote_state.foundation.outputs.vpc_id
+  subnet_ids = data.terraform_remote_state.foundation.outputs.private_subnet_ids
 
   enable_irsa = true
 
@@ -124,7 +124,7 @@ module "eks" {
     default = {
       instance_types = ["t3.medium"]
 
-      vpc_security_group_ids = [aws_security_group.app_runtime_sg.id]
+      vpc_security_group_ids = [data.terraform_remote_state.foundation.outputs.app_runtime_sg_id]
       
       # ============================================================
       # NODE GROUP AMI (Amazon Machine Image) CONFIGURATION
