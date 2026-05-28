@@ -9,9 +9,9 @@ This layer contains Kubernetes and application runtime resources that can be ind
 - Amazon EKS cluster
 - EKS managed node groups
 - AWS Load Balancer Controller
-- Kubernetes ingress resources
+- Kubernetes namespace (`imagegallery`)
 - Helm deployments
-- Kubernetes workloads and services
+- Runtime IAM resources
 
 The runtime layer has been validated as independently destroyable and rebuildable without impacting persistent foundation infrastructure such as VPC networking, RDS, shared security groups, or container registries.
 
@@ -32,7 +32,7 @@ Runtime provides:
 - Amazon EKS
 - Managed node groups
 - AWS Load Balancer Controller
-- Kubernetes application workloads
+- Kubernetes application runtime environment
 
 ## Runtime Rebuild Procedure
 
@@ -52,6 +52,7 @@ This recreates:
 - Managed node groups
 - IAM resources
 - AWS Load Balancer Controller
+- Kubernetes namespace (`imagegallery`)
 - Supporting runtime infrastructure
 
 Typical rebuild time is approximately 10-15 minutes.
@@ -78,15 +79,7 @@ imagegallery-eks
 
 This updates the existing `imagegallery-eks` context and avoids creation of AWS-generated ARN-based context names.
 
-### Step 3 - Recreate Application Namespace
-
-The Kubernetes namespace is not currently managed by Terraform and must be recreated after rebuilding the cluster.
-
-```powershell
-kubectl create namespace imagegallery
-```
-
-### Step 4 - Redeploy Application Workloads
+### Step 3 - Redeploy Application Workloads
 
 From the repository root:
 
@@ -102,7 +95,7 @@ This recreates:
 - Secrets
 - Ingress resources
 
-### Step 5 - Verify Runtime Health
+### Step 4 - Verify Runtime Health
 
 Verify cluster connectivity:
 
@@ -142,7 +135,7 @@ Expected:
 imagegallery-ingress
 ```
 
-### Step 6 - Validate Application
+### Step 5 - Validate Application
 
 Browse to:
 
@@ -168,6 +161,7 @@ This removes:
 - AWS Load Balancer Controller
 - Runtime IAM resources
 - Runtime security groups
+- Kubernetes namespace (`imagegallery`)
 
 This does NOT remove:
 
