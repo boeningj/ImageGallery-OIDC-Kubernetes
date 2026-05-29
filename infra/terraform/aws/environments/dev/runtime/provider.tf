@@ -5,6 +5,12 @@ provider "aws" {
 terraform {
   required_version = ">= 1.3"
 
+  backend "s3" {
+    bucket = "imagegallery-terraform-state"
+    key    = "dev/runtime/terraform.tfstate"
+    region = "us-east-2"
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"

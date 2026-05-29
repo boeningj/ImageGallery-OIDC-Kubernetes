@@ -1,7 +1,9 @@
 data "terraform_remote_state" "foundation" {
-  backend = "local"
+  backend = "s3"
 
   config = {
-    path = "../foundation/terraform.tfstate"
+    bucket = "imagegallery-terraform-state"
+    key    = "dev/foundation/terraform.tfstate"
+    region = "us-east-2"
   }
 }

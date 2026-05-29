@@ -15,7 +15,7 @@ This layer contains long-lived foundational infrastructure resources shared by a
 - Amazon ECR repositories
 - Shared IAM resources
 - ACM certificates (planned)
-- Remote Terraform backend resources (planned)
+- Amazon S3 Terraform state storage
 
 ## Runtime Dependency
 
@@ -35,6 +35,30 @@ Runtime consumes these outputs to provision:
 - Managed node groups
 - AWS Load Balancer Controller
 - Kubernetes workloads
+
+## Terraform State
+
+Foundation uses an Amazon S3 backend for Terraform state storage.
+
+Backend configuration:
+
+```text
+Bucket: imagegallery-terraform-state
+Key: dev/foundation/terraform.tfstate
+Region: us-east-2
+```
+
+The state bucket is managed by the Foundation stack because it is a long-lived shared infrastructure resource shared by all environments.
+
+State protection features:
+
+- S3 Versioning enabled
+- Server-side encryption enabled
+- Public access blocked
+
+Runtime consumes Foundation outputs through Terraform remote state stored in this backend.
+
+This remote backend architecture enables Terraform operations to be executed from developer workstations, GitHub Actions, and future CI/CD automation environments without dependency on local state files.
 
 ## Lifecycle
 

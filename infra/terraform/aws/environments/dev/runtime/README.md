@@ -34,6 +34,45 @@ Runtime provides:
 - AWS Load Balancer Controller
 - Kubernetes application runtime environment
 
+## Terraform State
+
+Runtime uses an Amazon S3 backend for Terraform state storage.
+
+Backend configuration:
+
+```text
+Bucket: imagegallery-terraform-state
+Key: dev/runtime/terraform.tfstate
+Region: us-east-2
+```
+
+Runtime consumes Foundation outputs through Terraform remote state stored in the same S3 backend.
+
+Foundation remote state configuration:
+
+```text
+Bucket: imagegallery-terraform-state
+Key: dev/foundation/terraform.tfstate
+Region: us-east-2
+```
+
+This architecture enables Terraform operations to be executed from:
+
+- Developer workstations
+- GitHub Actions
+- CI/CD pipelines
+- Future automation environments
+
+without dependency on local Terraform state files.
+
+State protection features:
+
+- S3 Versioning enabled
+- Server-side encryption enabled
+- Public access blocked
+
+This remote backend architecture is a prerequisite for GitHub Actions and future infrastructure automation because Terraform state is no longer tied to a specific workstation.
+
 ## Runtime Rebuild Procedure
 
 The following procedure was successfully validated by destroying and recreating the entire runtime environment while preserving Foundation infrastructure and application data.
@@ -80,6 +119,8 @@ imagegallery-eks
 This updates the existing `imagegallery-eks` context and avoids creation of AWS-generated ARN-based context names.
 
 ### Step 3 - Redeploy Application Workloads
+
+The Kubernetes namespace (`imagegallery`) is automatically recreated by Terraform as part of the Runtime infrastructure deployment.
 
 From the repository root:
 
