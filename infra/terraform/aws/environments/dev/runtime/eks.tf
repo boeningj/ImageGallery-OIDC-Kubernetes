@@ -24,12 +24,19 @@ module "eks" {
   # This uses the newer EKS access entry system instead of the legacy aws-auth ConfigMap.
   #
   # PRODUCTION NOTE:
-  # This example maps a single IAM user (terraform-user) to full cluster-admin access for simplicity in a local/dev environment.
+  #
+  # This example maps both a local Terraform IAM user (terraform-user)
+  # and a GitHub Actions IAM role (ImageGallery-GitHubActions-Dev) to
+  # full cluster-admin access for simplicity in a local/dev environment.
+  #
+  # The GitHub Actions role is used by CI/CD automation workflows to
+  # perform Terraform operations against the EKS cluster.
   #
   # In a real-world production environment:
   #
   # - DO NOT grant access to individual IAM users
-  # - INSTEAD, use IAM roles (often federated via SSO such as AWS IAM Identity Center, Okta, or Azure AD)
+  # - DO NOT grant cluster-admin access broadly
+  # - INSTEAD, use dedicated IAM roles (often federated via SSO such as AWS IAM Identity Center, Okta, or Azure AD)
   #
   # Typical role patterns:
   #
@@ -63,12 +70,28 @@ module "eks" {
   # - Manage access via Terraform to ensure consistency and auditability
   #
   # NOTE:
-  # This project uses a single IAM user (terraform-user) for simplicity, mapped to cluster-admin for development purposes.
+  # This project intentionally grants cluster-admin access to both
+  # terraform-user and ImageGallery-GitHubActions-Dev for development
+  # convenience. Production environments should use more restrictive,
+  # role-based access controls.
   # Changing access_entries updates cluster access control without recreating the cluster.
   # ============================================================
   access_entries = {
     terraform_user = {
       principal_arn = "arn:aws:iam::323146836950:user/terraform-user"
+
+      policy_associations = {
+        admin = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
+    }
+
+    github_actions = {
+      principal_arn = "arn:aws:iam::323146836950:role/ImageGallery-GitHubActions-Dev"
 
       policy_associations = {
         admin = {
