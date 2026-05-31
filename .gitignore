@@ -37,6 +37,7 @@ tfplan
 plan.txt
 *.plan
 *-for-ref.txt
+infra/terraform/aws/env/*.secrets.tfvars
 
 # -----------------------------
 # AWS / Kubernetes credentials

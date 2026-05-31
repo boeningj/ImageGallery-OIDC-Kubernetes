@@ -101,10 +101,10 @@ resource "aws_db_instance" "imagegallery_sqlserver" {
   engine         = "sqlserver-ex"
   engine_version = "15.00.4460.4.v1"
 
-  instance_class = "db.t3.micro"
+  instance_class = var.db_instance_class
 
-  allocated_storage     = 20
-  max_allocated_storage = 20
+  allocated_storage     = var.db_allocated_storage
+  max_allocated_storage = var.db_allocated_storage
   storage_type          = "gp3"
 
   username = var.db_username
