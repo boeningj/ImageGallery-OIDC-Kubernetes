@@ -42,6 +42,41 @@ jobs:
         working-directory: infra/terraform/aws/environments/${{ github.event.inputs.environment }}/runtime
         run: terraform init
 
+      # Kubernetes ingress resources managed by the AWS Load Balancer Controller
+      # contain finalizers that must be removed before the namespace can be deleted.
+      #
+      # During Runtime Shutdown it was observed that Terraform occasionally deleted the
+      # AWS Load Balancer Controller before it had finished cleaning up ingress
+      # and TargetGroupBinding resources. This left the imagegallery namespace
+      # stuck in the Terminating state and caused Terraform destroy to fail with:
+      #
+      #   Error: context deadline exceeded
+      #
+      # To avoid this race condition, delete the ingress and allow the ALB
+      # Controller to process finalizers before Terraform starts destroying
+      # runtime infrastructure.
+      - name: Configure kubectl
+        continue-on-error: true
+        run: |
+          aws eks update-kubeconfig \
+            --region $AWS_REGION \
+            --name imagegallery-cluster
+
+      - name: Delete ingress
+        continue-on-error: true
+        run: |
+          kubectl delete ingress imagegallery-ingress \
+            -n imagegallery \
+            --ignore-not-found=true
+
+      - name: Wait for ingress deletion
+        continue-on-error: true
+        run: |
+          kubectl wait \
+            --for=delete ingress/imagegallery-ingress \
+            -n imagegallery \
+            --timeout=10m  || true
+
       - name: Terraform Destroy
         working-directory: infra/terraform/aws/environments/${{ github.event.inputs.environment }}/runtime
         run: terraform destroy -auto-approve
