@@ -2,8 +2,8 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "20.8.5"
 
-  cluster_name    = "imagegallery-cluster"
-  cluster_version = "1.30"
+  cluster_name    = var.eks_cluster_name
+  cluster_version = var.eks_cluster_version
 
   vpc_id     = data.terraform_remote_state.foundation.outputs.vpc_id
   subnet_ids = data.terraform_remote_state.foundation.outputs.private_subnet_ids
@@ -145,7 +145,7 @@ module "eks" {
 
   eks_managed_node_groups = {
     default = {
-      instance_types = ["t3.medium"]
+      instance_types = [var.eks_node_instance_type]
 
       vpc_security_group_ids = [data.terraform_remote_state.foundation.outputs.app_runtime_sg_id]
       
@@ -181,13 +181,13 @@ module "eks" {
       # ============================================================
       ami_type = "AL2_x86_64"
 
-      min_size     = 1
-      max_size     = 2
-      desired_size = 1
+      min_size     = var.eks_node_min_size
+      max_size     = var.eks_node_max_size
+      desired_size = var.eks_node_desired_size
     }
   }
 
   tags = {
-    Environment = "dev"
+    Environment = var.environment
   }
 }

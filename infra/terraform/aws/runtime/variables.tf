@@ -14,12 +14,37 @@ variable "aws_region" {
     type        = string
 }
 
-variable "aws_s3_bucket" {
-    description = "AWS S3 Bucket"
-    type        = string
+variable "foundation_state_key" {
+  description = "Foundation remote state key"
+  type        = string
 }
 
-variable "aws_s3_bucket_key" {
-    description = "AWS S3 Bucket Key"
-    type        = string
+variable "eks_cluster_name" {
+  description = "EKS cluster name"
+  type        = string
+}
+
+variable "eks_cluster_version" {
+  description = "EKS Kubernetes version"
+  type        = string
+}
+
+variable "eks_node_instance_type" {
+  description = "EKS worker node instance type"
+  type        = string
+}
+
+variable "eks_node_desired_size" {
+  description = "Desired EKS node count"
+  type        = number
+}
+
+variable "eks_node_min_size" {
+  description = "Minimum EKS node count"
+  type        = number
+}
+
+variable "eks_node_max_size" {
+  description = "Maximum EKS node count"
+  type        = number
 }

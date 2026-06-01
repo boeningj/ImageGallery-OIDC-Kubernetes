@@ -116,7 +116,7 @@ resource "helm_release" "alb_controller" {
 
   set {
     name  = "region"
-    value = "us-east-2"
+    value = var.aws_region
   }
 
   set {

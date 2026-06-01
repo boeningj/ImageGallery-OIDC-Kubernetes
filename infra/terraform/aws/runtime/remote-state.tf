@@ -3,7 +3,7 @@ data "terraform_remote_state" "foundation" {
 
   config = {
     bucket = "imagegallery-terraform-state"
-    key    = "dev/foundation/terraform.tfstate"
-    region = "us-east-2"
+    key    = var.foundation_state_key
+    region = var.aws_region
   }
 }
