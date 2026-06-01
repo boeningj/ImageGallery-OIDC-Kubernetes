@@ -48,3 +48,8 @@ variable "eks_node_max_size" {
   description = "Maximum EKS node count"
   type        = number
 }
+
+variable "github_actions_role_arn" {
+  description = "GitHub Actions IAM role ARN"
+  type        = string
+}

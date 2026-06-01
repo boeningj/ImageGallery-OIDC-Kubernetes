@@ -91,7 +91,7 @@ module "eks" {
     }
 
     github_actions = {
-      principal_arn = "arn:aws:iam::323146836950:role/ImageGallery-GitHubActions-Dev"
+      principal_arn = var.github_actions_role_arn
 
       policy_associations = {
         admin = {
