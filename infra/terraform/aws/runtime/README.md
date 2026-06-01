@@ -15,6 +15,34 @@ This layer contains Kubernetes and application runtime resources that can be ind
 
 The runtime layer has been validated as independently destroyable and rebuildable without impacting persistent foundation infrastructure such as VPC networking, RDS, shared security groups, or container registries.
 
+## Directory Structure
+
+```text
+infra/terraform/aws
+├── env
+│   ├── dev.foundation.backend.tfvars
+│   ├── dev.foundation.tfvars
+│   ├── dev.runtime.backend.tfvars
+│   ├── dev.runtime.tfvars
+│   └── dev.secrets.tfvars
+│
+├── foundation
+│   ├── provider.tf
+│   ├── variables.tf
+│   ├── vpc.tf
+│   ├── rds.tf
+│   ├── s3.tf
+│   └── outputs.tf
+│
+└── runtime
+    ├── eks.tf
+    ├── alb-controller.tf
+    ├── namespace.tf
+    └── outputs.tf
+```
+
+Foundation and Runtime are separate Terraform root modules that maintain independent state files while sharing environment-specific configuration from the `env` directory.
+
 ## Foundation Dependency
 
 This runtime stack consumes outputs from the Foundation stack using Terraform remote state.
@@ -71,7 +99,35 @@ State protection features:
 - Server-side encryption enabled
 - Public access blocked
 
-This remote backend architecture is a prerequisite for GitHub Actions and future infrastructure automation because Terraform state is no longer tied to a specific workstation.
+## Terraform Initialization
+
+Initialize Runtime using the environment-specific backend configuration:
+
+```powershell
+terraform init -backend-config="../env/dev.runtime.backend.tfvars"
+```
+
+Validate:
+
+```powershell
+terraform validate
+```
+
+## Terraform Planning
+
+Generate a plan using environment-specific variables:
+
+```powershell
+terraform plan -var-file="../env/dev.runtime.tfvars"
+```
+
+## Terraform Apply
+
+Apply Runtime infrastructure:
+
+```powershell
+terraform apply -var-file="../env/dev.runtime.tfvars"
+```
 
 ## Runtime Rebuild Procedure
 
@@ -79,10 +135,10 @@ The following procedure was successfully validated by destroying and recreating 
 
 ### Step 1 - Recreate Runtime Infrastructure
 
-From this directory:
+From the Runtime directory:
 
 ```powershell
-terraform apply
+terraform apply -var-file="../env/dev.runtime.tfvars"
 ```
 
 This recreates:
@@ -191,7 +247,8 @@ The application should be fully functional and connected to the existing Foundat
 Destroy only runtime resources:
 
 ```powershell
-terraform destroy
+terraform destroy `
+  -var-file="../env/dev.runtime.tfvars"
 ```
 
 This removes:

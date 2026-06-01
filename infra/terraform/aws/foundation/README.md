@@ -12,10 +12,37 @@ This layer contains long-lived foundational infrastructure resources shared by a
 - Route tables
 - Shared security groups
 - Amazon RDS SQL Server
-- Amazon ECR repositories
 - Shared IAM resources
 - ACM certificates (planned)
 - Amazon S3 Terraform state storage
+
+## Directory Structure
+
+```text
+infra/terraform/aws
+├── env
+│   ├── dev.foundation.backend.tfvars
+│   ├── dev.foundation.tfvars
+│   ├── dev.runtime.backend.tfvars
+│   ├── dev.runtime.tfvars
+│   └── dev.secrets.tfvars
+│
+├── foundation
+│   ├── provider.tf
+│   ├── variables.tf
+│   ├── vpc.tf
+│   ├── rds.tf
+│   ├── s3.tf
+│   └── outputs.tf
+│
+└── runtime
+    ├── eks.tf
+    ├── alb-controller.tf
+    ├── namespace.tf
+    └── outputs.tf
+```
+
+Foundation and Runtime are separate Terraform root modules that maintain independent state files while sharing environment-specific configuration from the `env` directory.
 
 ## Runtime Dependency
 
@@ -59,6 +86,58 @@ State protection features:
 Runtime consumes Foundation outputs through Terraform remote state stored in this backend.
 
 This remote backend architecture enables Terraform operations to be executed from developer workstations, GitHub Actions, and future CI/CD automation environments without dependency on local state files.
+
+## Terraform Initialization
+
+Initialize Foundation using the environment-specific backend configuration:
+
+```powershell
+terraform init -backend-config="../env/dev.foundation.backend.tfvars"
+```
+
+Validate:
+
+```powershell
+terraform validate
+```
+
+## Terraform Planning
+
+Generate a plan using environment and secret variables:
+
+```powershell
+terraform plan -var-file="../env/dev.foundation.tfvars" -var-file="../env/dev.secrets.tfvars"
+```
+
+## Terraform Apply
+
+Apply Foundation infrastructure:
+
+```powershell
+terraform apply -var-file="../env/dev.foundation.tfvars" -var-file="../env/dev.secrets.tfvars"
+```
+
+## Environment Configuration
+
+Environment-specific values are stored in the `env` directory.
+
+Examples:
+
+```text
+dev.foundation.tfvars
+qa.foundation.tfvars
+prod.foundation.tfvars
+```
+
+Sensitive values are stored separately and excluded from source control:
+
+```text
+dev.secrets.tfvars
+qa.secrets.tfvars
+prod.secrets.tfvars
+```
+
+Secret variable files are ignored by Git and should never be committed.
 
 ## Lifecycle
 
