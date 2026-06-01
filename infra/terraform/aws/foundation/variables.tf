@@ -40,11 +40,6 @@ variable "aws_s3_bucket" {
     type        = string
 }
 
-variable "aws_s3_bucket_key" {
-    description = "AWS S3 Bucket Key"
-    type        = string
-}
-
 variable "aws_vpc_cidr" {
     description = "AWS VPC CIDR"
     type        = string
