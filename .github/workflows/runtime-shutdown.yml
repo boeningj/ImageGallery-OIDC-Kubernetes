@@ -39,8 +39,11 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
-        working-directory: infra/terraform/aws/environments/${{ github.event.inputs.environment }}/runtime
-        run: terraform init
+        working-directory: infra/terraform/aws/runtime
+        run: |
+          terraform init \
+            -reconfigure \
+            -backend-config="../env/${{ github.event.inputs.environment }}.runtime.backend.tfvars"
 
       # Kubernetes ingress resources managed by the AWS Load Balancer Controller
       # contain finalizers that must be removed before the namespace can be deleted.
@@ -60,7 +63,8 @@ jobs:
         run: |
           aws eks update-kubeconfig \
             --region $AWS_REGION \
-            --name imagegallery-cluster
+            --name imagegallery-cluster \
+            --alias imagegallery-eks
 
       - name: Delete ingress
         continue-on-error: true
@@ -78,5 +82,8 @@ jobs:
             --timeout=10m  || true
 
       - name: Terraform Destroy
-        working-directory: infra/terraform/aws/environments/${{ github.event.inputs.environment }}/runtime
-        run: terraform destroy -auto-approve
+        working-directory: infra/terraform/aws/runtime
+        run: |
+          terraform destroy \
+            -auto-approve \
+            -var-file="../env/${{ github.event.inputs.environment }}.runtime.tfvars"
