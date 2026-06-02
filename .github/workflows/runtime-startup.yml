@@ -84,6 +84,19 @@ jobs:
             -n kube-system \
             --timeout=10m
 
+      - name: Verify Namespace Exists
+        run: |
+          kubectl get namespace imagegallery
+
+      - name: Create Application Secret
+        run: |
+          kubectl create secret generic imagegallery-common-secrets \
+            --namespace imagegallery \
+            --from-literal=Authentication__ClientSecret="${{ secrets.IMAGEGALLERY_CLIENT_SECRET }}" \
+            --from-literal=Authentication__ApiClientSecret="${{ secrets.IMAGEGALLERY_API_CLIENT_SECRET }}" \
+            --from-literal=ConnectionStrings__ImageGalleryDBConnectionString="${{ secrets.IMAGEGALLERY_CONNECTION_STRING }}" \
+            --dry-run=client -o yaml | kubectl apply -f -
+
       - name: Deploy Application Workloads
         run: |
           kubectl apply -f k8s/aws
