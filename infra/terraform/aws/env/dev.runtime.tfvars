@@ -1,0 +1,11 @@
+#project_name = "imagegallery"
+environment = "dev"
+aws_region = "us-east-2"
+foundation_state_key = "dev/foundation/terraform.tfstate"
+eks_cluster_name    = "imagegallery-cluster"
+eks_cluster_version = "1.30"
+eks_node_instance_type = "t3.medium"
+eks_node_desired_size = 1
+eks_node_min_size     = 1
+eks_node_max_size     = 2
+github_actions_role_arn = "arn:aws:iam::323146836950:role/ImageGallery-GitHubActions-Dev"
