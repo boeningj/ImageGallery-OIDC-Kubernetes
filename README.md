@@ -22,16 +22,19 @@ Supported deployment environments include:
 - ASP.NET Core 8
 - Duende IdentityServer
 - OAuth2 / OpenID Connect
+- EF Core Migrations
+- SQL Server
 - Docker & Docker Compose
 - Kubernetes
-- AWS EKS
-- Terraform
-- Amazon RDS for SQL Server
-- SQL Server
-- EF Core Migrations
 - NGINX
+- AWS EKS
+- Amazon ECR
+- Amazon RDS for SQL Server
 - AWS ALB + ACM
 - Cloudflare DNS
+- Terraform
+- GitHub Actions
+- GitHub OIDC Federation
 
 ## Key Features
 
@@ -134,6 +137,22 @@ docker-compose.yaml
 | `nginx/` | Local reverse proxy configuration |
 | `env/templates/` | Sanitized environment configuration templates |
 | `docker-compose.yaml` | Docker Compose orchestration |
+
+### Terraform Architecture
+
+AWS infrastructure is organized using a shared Foundation/Runtime Terraform architecture.
+
+| Layer | Purpose |
+|---------|---------|
+| Foundation | Long-lived shared infrastructure such as VPC networking, Amazon RDS SQL Server, security groups, and Terraform state storage |
+| Runtime | Disposable application infrastructure such as Amazon EKS, managed node groups, ingress controllers, and Kubernetes workloads |
+
+This separation enables independent Runtime destroy/rebuild operations without impacting persistent infrastructure or application data.
+
+Additional details:
+
+- [Foundation Infrastructure](infra/terraform/aws/foundation/README.md)
+- [Runtime Infrastructure](infra/terraform/aws/runtime/README.md)
 
 ### Infrastructure Design Goals
 
@@ -330,6 +349,8 @@ The AWS deployment demonstrates a production-style cloud-native architecture inc
 - Kubernetes ConfigMaps and Secrets
 - Containerized ASP.NET Core workloads
 - Amazon RDS for SQL Server managed persistence
+- GitHub Actions automation for Runtime startup and shutdown workflows
+- GitHub OIDC federation for passwordless AWS authentication
 
 ### AWS Traffic Flow Architecture
 

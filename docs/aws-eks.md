@@ -24,6 +24,39 @@ Terraform configuration is located under:
 infra/terraform/aws/
 ```
 
+## Infrastructure Automation
+
+The AWS Runtime environment can be independently started and stopped using GitHub Actions workflows.
+
+Automation is implemented using:
+
+- GitHub Actions
+- GitHub OIDC Federation
+- Terraform
+- Amazon EKS
+- Kubernetes
+
+The platform uses OpenID Connect (OIDC) federation between GitHub Actions and AWS IAM, eliminating the need for long-lived AWS access keys in CI/CD workflows.
+
+Runtime automation includes:
+
+- Automated Terraform Runtime deployment
+- Automated Terraform Runtime destruction
+- Automated Kubernetes cluster configuration
+- Automated Kubernetes secret creation from GitHub repository secrets
+- Automated application deployment to Amazon EKS
+
+The Runtime Startup and Runtime Shutdown workflows were validated through multiple full destroy/rebuild cycles while preserving Foundation-managed infrastructure and application data.
+
+Foundation infrastructure remains persistent and includes:
+
+- VPC networking
+- Security groups
+- Amazon RDS SQL Server
+- Terraform remote state storage
+
+This separation enables the Kubernetes runtime environment to be recreated on demand without impacting persistent application data or shared infrastructure resources.
+
 ## Kubernetes Deployment
 
 AWS-specific Kubernetes manifests are located under:
