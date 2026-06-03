@@ -39,16 +39,22 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
-        working-directory: infra/terraform/aws/environments/${{ github.event.inputs.environment }}/runtime
-        run: terraform init
+        working-directory: infra/terraform/aws/runtime
+        run: |
+          terraform init \
+            -reconfigure \
+            -backend-config="../env/${{ github.event.inputs.environment }}.runtime.backend.tfvars"
 
       - name: Terraform Validate
-        working-directory: infra/terraform/aws/environments/${{ github.event.inputs.environment }}/runtime
+        working-directory: infra/terraform/aws/runtime
         run: terraform validate
 
       - name: Terraform Apply
-        working-directory: infra/terraform/aws/environments/${{ github.event.inputs.environment }}/runtime
-        run: terraform apply -auto-approve
+        working-directory: infra/terraform/aws/runtime
+        run: |
+          terraform apply \
+            -auto-approve \
+            -var-file="../env/${{ github.event.inputs.environment }}.runtime.tfvars"
 
       - name: Configure kubectl
         run: |
