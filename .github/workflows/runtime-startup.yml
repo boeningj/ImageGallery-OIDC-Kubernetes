@@ -94,6 +94,106 @@ jobs:
         run: |
           kubectl get namespace imagegallery
 
+      # ============================================================
+      # CLOUDFLARE API TOKEN FOR EXTERNALDNS
+      # ============================================================
+      #
+      # ExternalDNS manages DNS records automatically by calling
+      # the Cloudflare API.
+      #
+      # The Cloudflare API token is stored securely as a GitHub
+      # Actions secret and recreated as a Kubernetes Secret each
+      # time the Runtime environment is started.
+      #
+      # WHY THIS IS NEEDED:
+      # - Runtime Shutdown destroys the EKS cluster
+      # - Kubernetes Secrets are lost when the cluster is destroyed
+      # - Runtime Startup must recreate the secret before
+      #   ExternalDNS can start successfully
+      #
+      # SECURITY:
+      # - Token is stored in GitHub Secrets
+      # - Token is NOT stored in Terraform state
+      # - Token is scoped to DNS management for boeninglabs.net
+      # ============================================================
+      - name: Create Cloudflare Secret
+        run: |
+          kubectl create secret generic cloudflare-api-token \
+            --namespace kube-system \
+            --from-literal=api-token="${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      # TEMP VERIFICATION
+      - name: Verify Helm
+        run: |
+          helm version
+
+      # ============================================================
+      # INSTALL EXTERNALDNS
+      # ============================================================
+      #
+      # ExternalDNS watches Kubernetes Ingress resources and
+      # automatically creates or updates DNS records in Cloudflare.
+      #
+      # WORKFLOW:
+      #
+      #   Ingress
+      #       ↓
+      #   AWS Load Balancer Controller
+      #       ↓
+      #   ALB Created
+      #       ↓
+      #   ExternalDNS Detects ALB Hostname
+      #       ↓
+      #   Cloudflare DNS Updated
+      #
+      # RESULT:
+      #
+      #   imagegallery.boeninglabs.net
+      #
+      # automatically points at the current AWS Application
+      # Load Balancer after each Runtime Startup.
+      #
+      # This eliminates the need to manually update Cloudflare
+      # whenever the Runtime environment is rebuilt.
+      # ============================================================
+      - name: Install ExternalDNS
+        run: |
+          helm repo add external-dns https://kubernetes-sigs.github.io/external-dns/
+          helm repo update
+
+          helm upgrade --install external-dns external-dns/external-dns \
+            --namespace kube-system \
+            --create-namespace \
+            --set provider.name=cloudflare \
+            --set env[0].name=CF_API_TOKEN \
+            --set env[0].valueFrom.secretKeyRef.name=cloudflare-api-token \
+            --set env[0].valueFrom.secretKeyRef.key=api-token \
+            --set domainFilters[0]=boeninglabs.net \
+            --set policy=sync \
+            --set registry=txt \
+            --set txtOwnerId=imagegallery
+
+      # ============================================================
+      # WAIT FOR EXTERNALDNS TO BECOME READY
+      # ============================================================
+      #
+      # ExternalDNS must be fully running before application
+      # workloads are deployed.
+      #
+      # This ensures:
+      # - DNS reconciliation can begin immediately
+      # - Startup failures are detected early
+      # - Subsequent deployment steps do not proceed until the
+      #   controller is healthy
+      # ============================================================
+      - name: Wait for ExternalDNS
+        run: |
+          kubectl rollout status \
+            deployment/external-dns \
+            -n kube-system \
+            --timeout=10m
+
       - name: Create Application Secret
         run: |
           kubectl create secret generic imagegallery-common-secrets \
