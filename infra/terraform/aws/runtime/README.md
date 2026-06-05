@@ -133,6 +133,50 @@ terraform apply -var-file="../env/dev.runtime.tfvars"
 
 The following procedure was successfully validated by destroying and recreating the entire runtime environment while preserving Foundation infrastructure and application data.
 
+### Automated DNS Reconciliation
+
+Runtime ingress DNS is automatically managed using Kubernetes ExternalDNS with Cloudflare.
+
+ExternalDNS monitors Kubernetes ingress resources and automatically reconciles Cloudflare DNS records whenever AWS Application Load Balancer hostnames change.
+
+This eliminates the need for manual DNS updates after Runtime rebuild operations.
+
+### ExternalDNS Workflow
+
+```text
+Runtime Startup
+    ↓
+Ingress Created
+    ↓
+AWS Load Balancer Controller Creates ALB
+    ↓
+ExternalDNS Detects Ingress Hostname
+    ↓
+Cloudflare DNS Updated Automatically
+    ↓
+Application Becomes Publicly Reachable
+```
+
+### Ingress Annotation
+
+Ingress resources intended for public DNS management include:
+
+```yaml
+external-dns.alpha.kubernetes.io/hostname: imagegallery.boeninglabs.net
+```
+
+### DNS Ownership
+
+ExternalDNS uses TXT ownership records to safely manage Cloudflare DNS reconciliation.
+
+Example ownership record:
+
+```text
+cname-imagegallery.boeninglabs.net
+```
+
+This ownership model prevents accidental modification of DNS records managed outside Kubernetes.
+
 ### Step 1 - Recreate Runtime Infrastructure
 
 From the Runtime directory:
@@ -240,7 +284,7 @@ Browse to:
 https://imagegallery.boeninglabs.net
 ```
 
-The application should be fully functional and connected to the existing Foundation-managed SQL Server database.
+The application should be fully functional and publicly reachable through the automatically reconciled Cloudflare DNS record.
 
 ## Runtime Destroy Procedure
 

@@ -32,6 +32,7 @@ Supported deployment environments include:
 - Amazon RDS for SQL Server
 - AWS ALB + ACM
 - Cloudflare DNS
+- Kubernetes ExternalDNS
 - Terraform
 - GitHub Actions
 - GitHub OIDC Federation
@@ -345,12 +346,15 @@ The AWS deployment demonstrates a production-style cloud-native architecture inc
 - AWS Application Load Balancer (ALB) ingress
 - HTTPS/TLS termination using AWS Certificate Manager (ACM)
 - Public DNS routing using Cloudflare
+- Automated DNS reconciliation using Kubernetes ExternalDNS and Cloudflare
 - Infrastructure as Code using Terraform
 - Kubernetes ConfigMaps and Secrets
 - Containerized ASP.NET Core workloads
 - Amazon RDS for SQL Server managed persistence
 - GitHub Actions automation for Runtime startup and shutdown workflows
 - GitHub OIDC federation for passwordless AWS authentication
+
+The platform uses Kubernetes ExternalDNS with Cloudflare to automatically reconcile public DNS records whenever AWS Application Load Balancer hostnames change during runtime rebuild operations.
 
 ### AWS Traffic Flow Architecture
 
@@ -404,6 +408,7 @@ Key lessons learned included:
 - OAuth2/OIDC applications deployed behind reverse proxies require careful handling of external vs internal URLs, especially for redirect URIs and token validation endpoints.
 - Docker container networking differs significantly from local host networking, requiring explicit handling of internal service discovery and hostname resolution.
 - Kubernetes ingress and AWS ALB routing introduce additional complexity around HTTPS forwarding, path handling, and TLS termination behavior.
+- Introducing Kubernetes ExternalDNS into an environment with pre-existing manually managed Cloudflare DNS records exposed DNS ownership reconciliation behavior using TXT registry records and highlighted the importance of controller-managed declarative infrastructure.
 - OAuth2 reference tokens require runtime token introspection and introduce different operational considerations compared to self-contained JWT access tokens.
 - Kubernetes ConfigMaps and Secrets greatly simplify environment-specific configuration management compared to local environment variable handling.
 - Migrating from container-local SQLite storage to Amazon RDS SQL Server highlighted the importance of shared durable persistence for Kubernetes workloads and multi-replica cloud-native deployments.
@@ -421,7 +426,7 @@ Potential future enhancements for the platform include:
 - Implementing automated container vulnerability scanning and image hardening practices.
 - Implementing shared ASP.NET Core Data Protection key storage using Redis or another distributed provider to support reliable multi-replica deployments for the MVC client and IdentityServer workloads.
 - Implementing GitHub Actions CI/CD pipelines for automated container builds, ECR publishing, and Kubernetes deployments.
-- Further automating cloud infrastructure and deployment workflows by integrating DNS management, ACM certificate provisioning, and Kubernetes workload deployment into Infrastructure as Code and CI/CD pipelines.
+- Further expanding cloud-native automation workflows using Terraform, Kubernetes controllers, and GitHub Actions CI/CD pipelines.
 - Supporting horizontal pod autoscaling (HPA) for Kubernetes workloads.
 - Implementing external secret management solutions such as AWS Secrets Manager or HashiCorp Vault.
 
