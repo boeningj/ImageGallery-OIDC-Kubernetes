@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ImageGallery.Model\ImageGallery.Model.csproj" />
     <ProjectReference Include="..\ImageGallery.Authorization\ImageGallery.Authorization.csproj" />
+    <ProjectReference Include="..\ImageGallery.Infrastructure\ImageGallery.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
