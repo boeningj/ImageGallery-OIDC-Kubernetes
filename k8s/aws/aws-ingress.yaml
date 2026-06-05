@@ -4,6 +4,7 @@ metadata:
   name: imagegallery-ingress
   namespace: imagegallery
   annotations:
+    external-dns.alpha.kubernetes.io/hostname: imagegallery.boeninglabs.net
     # ============================================================
     # USE AWS ALB INSTEAD OF NGINX
     # ============================================================
