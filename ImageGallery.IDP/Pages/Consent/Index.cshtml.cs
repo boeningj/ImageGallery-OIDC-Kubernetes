@@ -15,6 +15,7 @@ namespace ImageGallery.IDP.Pages.Consent;
 
 [Authorize]
 [SecurityHeaders]
+[IgnoreAntiforgeryToken]
 public class Index : PageModel
 {
     private readonly IIdentityServerInteractionService _interaction;

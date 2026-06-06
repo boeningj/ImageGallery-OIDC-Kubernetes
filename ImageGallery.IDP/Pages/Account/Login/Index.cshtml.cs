@@ -16,6 +16,7 @@ namespace ImageGallery.IDP.Pages.Login;
 
 [SecurityHeaders]
 [AllowAnonymous]
+[IgnoreAntiforgeryToken]
 public class Index : PageModel
 {
     private readonly TestUserStore _users;

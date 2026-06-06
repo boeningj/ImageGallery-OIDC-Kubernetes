@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.Net.Http.Headers;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Net;
+using ImageGallery.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +45,8 @@ if (missing.Any())
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(configure => 
         configure.JsonSerializerOptions.PropertyNamingPolicy = null);
+    
+builder.Services.AddImageGalleryDataProtection(builder.Configuration);
 
 // NOTE:  Prior to .NET 8.0, this was defined in JWT security token handler
 JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();

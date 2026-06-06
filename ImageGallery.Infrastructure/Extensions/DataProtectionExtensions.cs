@@ -12,7 +12,7 @@ public static class DataProtectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("ImageGalleryDB");
+        var connectionString = configuration.GetConnectionString("ImageGalleryDBConnectionString");
 
         services.AddDbContext<DataProtectionKeyDbContext>(options => options.UseSqlServer(connectionString));
 
