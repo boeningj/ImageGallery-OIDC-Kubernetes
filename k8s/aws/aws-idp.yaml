@@ -51,9 +51,7 @@ spec:
           # Mount writable key directory
           volumeMounts:
             - name: idp-keys
-              mountPath: /app/keys
-            - name: dp-keys
-              mountPath: /home/app/.aspnet/DataProtection-Keys
+              mountPath: /app/keys            
 
           # ========================================
           # STARTUP PROBE
@@ -89,6 +87,4 @@ spec:
       # Pod-level volumes (NOT inside container)
       volumes:
         - name: idp-keys
-          emptyDir: {}
-        - name: dp-keys
-          emptyDir: {}
+          emptyDir: {}        

@@ -40,11 +40,7 @@ spec:
             - configMapRef:
                 name: imagegallery-client-config
             - secretRef:
-                name: imagegallery-common-secrets
-
-          volumeMounts:
-            - name: dp-keys
-              mountPath: /home/app/.aspnet/DataProtection-Keys
+                name: imagegallery-common-secrets          
 
           # startupProbe:
           #   httpGet:
@@ -65,8 +61,4 @@ spec:
           #     path: /
           #     port: 7184
           #   initialDelaySeconds: 15
-          #   periodSeconds: 10
-
-      volumes:
-        - name: dp-keys
-          emptyDir: {}
+          #   periodSeconds: 10     

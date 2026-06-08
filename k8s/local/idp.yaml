@@ -52,9 +52,6 @@ spec:
           volumeMounts:
             - name: idp-keys
               mountPath: /app/keys
-          
-            - name: dp-keys
-              mountPath: /home/app/.aspnet/DataProtection-Keys
 
           # ========================================
           # STARTUP PROBE
@@ -92,7 +89,4 @@ spec:
         - name: idp-keys
           hostPath:
             path: "/run/desktop/mnt/host/d/home.jonathan/Documents/Pluralsight/ASP.NET CORE Securing-oauth2-oidc-v2/04/demos/start/ImageGallery.IDP/keys"
-            type: Directory
-        - name: dp-keys
-          hostPath:
-            path: "/run/desktop/mnt/host/d/home.jonathan/Documents/Pluralsight/ASP.NET CORE Securing-oauth2-oidc-v2/04/demos/start/ImageGallery.IDP/dpkeys"
+            type: Directory      
