@@ -1,6 +1,7 @@
 using Serilog;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Net;
+using ImageGallery.Infrastructure.Extensions;
 
 namespace ImageGallery.IDP;
 
@@ -10,6 +11,8 @@ internal static class HostingExtensions
     {
         // uncomment if you want to add a UI
         builder.Services.AddRazorPages();
+
+        builder.Services.AddImageGalleryDataProtection(builder.Configuration);
 
         builder.Services.AddAntiforgery(options =>
             {

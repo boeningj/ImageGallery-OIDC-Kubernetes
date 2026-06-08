@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageGallery.IDP", "ImageGa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageGallery.Authorization", "ImageGallery.Authorization\ImageGallery.Authorization.csproj", "{CB156099-B1D9-44B5-A0DE-1A92B1CA1D61}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageGallery.Infrastructure", "ImageGallery.Infrastructure\ImageGallery.Infrastructure.csproj", "{476FA164-1989-4E51-8532-D0F36E64E0B0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{55FE59FE-7EC3-4CBC-A8E4-8AD7BC7274AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55FE59FE-7EC3-4CBC-A8E4-8AD7BC7274AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55FE59FE-7EC3-4CBC-A8E4-8AD7BC7274AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{476FA164-1989-4E51-8532-D0F36E64E0B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{476FA164-1989-4E51-8532-D0F36E64E0B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{476FA164-1989-4E51-8532-D0F36E64E0B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{476FA164-1989-4E51-8532-D0F36E64E0B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
