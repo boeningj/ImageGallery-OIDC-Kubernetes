@@ -270,7 +270,21 @@ Each service is launched in a separate PowerShell window to simplify local debug
 |---|---|
 | MVC Client | https://localhost:7184 |
 | ImageGallery API | https://localhost:7075 |
-| Duende IdentityServer | https://localhost:5001 |
+| Duende IdentityServer | https://localhost:5001/idp |
+
+### Identity Provider Path Base
+
+The Duende IdentityServer host is externally exposed under the `/idp` path segment in all environments:
+
+- Local ASP.NET Core
+- Docker Compose
+- Local Kubernetes
+- AWS EKS
+
+Example:
+
+```text
+https://localhost:5001/idp
 
 ## Docker Deployment
 
