@@ -113,6 +113,7 @@ ImageGallery.API/
 ImageGallery.Client/
 ImageGallery.IDP/
 ImageGallery.Authorization/
+ImageGallery.Infrastructure/
 
 infra/terraform/aws/
 
@@ -132,6 +133,7 @@ docker-compose.yaml
 | `ImageGallery.Client/` | ASP.NET Core MVC client application |
 | `ImageGallery.IDP/` | Duende IdentityServer OIDC/OAuth2 provider |
 | `ImageGallery.Authorization/` | Shared authorization policies and requirements |
+| `ImageGallery.Infrastructure/` | Shared infrastructure services including ASP.NET Core Data Protection persistence and infrastructure EF Core migrations |
 | `infra/terraform/aws/` | AWS Terraform Infrastructure as Code |
 | `k8s/local/` | Local Kubernetes manifests |
 | `k8s/aws/` | AWS EKS Kubernetes manifests |
@@ -285,6 +287,7 @@ Example:
 
 ```text
 https://localhost:5001/idp
+```
 
 ## Docker Deployment
 
