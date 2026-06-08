@@ -60,7 +60,7 @@ docker run -d --rm `
 Write-Host "Starting ImageGallery Client..."
 
 # Map "localhost" inside the container to the host machine.
-# Required because the client uses https://localhost:5000 as the OIDC Authority,
+# Required because the client uses https://localhost:5000/idp as the OIDC Authority,
 # which must be reachable from inside the container.
 # Without this, "localhost" would refer to the container itself and break authentication.
 docker run -d --rm `
