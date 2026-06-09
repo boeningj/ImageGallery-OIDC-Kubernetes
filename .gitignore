@@ -95,3 +95,12 @@ ImageGallery.IDP/keys/
 # Temporary testing artifacts
 # -----------------------------
 ImageGallery.API/Test Tokens.txt
+
+# -----------------------------
+# Certificates / Secrets
+# -----------------------------
+certs/*.pfx
+certs/*.key
+certs/*.crt
+certs/*.pem
+certs/*.password

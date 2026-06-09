@@ -2,6 +2,7 @@ using Serilog;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Net;
 using ImageGallery.Infrastructure.Extensions;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ImageGallery.IDP;
 
@@ -20,6 +21,25 @@ internal static class HostingExtensions
                 options.Cookie.Path = "/idp";
             });
 
+        var signingCertRelativePath = builder.Configuration["IdentityServer:SigningCertPath"];
+        var signingCertPassword = builder.Configuration["IdentityServer:SigningCertPassword"];
+
+        if (string.IsNullOrWhiteSpace(signingCertRelativePath))
+        {
+            throw new InvalidOperationException("IdentityServer:SigningCertPath is not configured.");
+        }
+
+        if (string.IsNullOrWhiteSpace(signingCertPassword))
+        {
+            throw new InvalidOperationException("IdentityServer:SigningCertPassword is not configured.");
+        }
+
+        var signingCertPath = Path.Combine(builder.Environment.ContentRootPath, "..", signingCertRelativePath);
+        
+        Console.WriteLine($"Loading signing certificate from: {signingCertPath}");
+
+        var signingCert = new X509Certificate2(signingCertPath, signingCertPassword);
+
         builder.Services.AddIdentityServer(options =>
             {
                 // https://docs.duendesoftware.com/identityserver/v6/fundamentals/resources/api_scopes#authorization-based-on-scopes
@@ -31,12 +51,14 @@ internal static class HostingExtensions
                 {
                     options.IssuerUri = publicOrigin;
                 }
+                options.KeyManagement.Enabled = false;
             })
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiResources(Config.ApiResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryClients(Config.GetClients(builder.Configuration))
-            .AddTestUsers(TestUsers.Users);
+            .AddTestUsers(TestUsers.Users)
+            .AddSigningCredential(signingCert);
 
         return builder.Build();
     }
