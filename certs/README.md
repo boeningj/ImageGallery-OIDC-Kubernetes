@@ -11,7 +11,7 @@ This certificate is responsible for:
 - signing JWT tokens
 - establishing stable cryptographic identity
 - publishing JWKS signing keys
-- supporting stable distributed/multi-replica IdentityServer deployments
+- supporting stable distributed and multi-replica IdentityServer deployments
 
 This certificate is NOT used for HTTPS/TLS transport security.
 
@@ -28,7 +28,7 @@ DO NOT commit:
 - passwords
 - private keys
 
-Only documentation, scripts, and templates should be committed.
+Only documentation, scripts, templates, and sample configuration files should be committed.
 
 ## Local Development and Container Environments
 
@@ -38,7 +38,8 @@ The signing certificate is used consistently across:
 
 - local runtime execution
 - Docker container execution
-- future distributed/multi-replica environments
+- Kubernetes execution
+- future distributed and multi-replica environments
 
 This certificate is used by `ImageGallery.IDP` as the IdentityServer signing credential for:
 
@@ -93,6 +94,21 @@ certs/imagegallery-signing.pfx
 ```
 
 The certificate file is intentionally excluded from source control via `.gitignore`.
+
+## Current Architecture
+
+The `ImageGallery.IDP` service currently loads its IdentityServer signing certificate from:
+
+- local filesystem paths during local development
+- Docker-mounted volumes during containerized execution
+- Kubernetes-mounted volumes during local Kubernetes execution
+
+This provides:
+
+- stable signing identity
+- deterministic JWKS publication
+- distributed authentication consistency
+- compatibility with multi-container and future multi-replica deployments
 
 ## Future Evolution
 

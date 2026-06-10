@@ -48,10 +48,11 @@ spec:
             - name: ASPNETCORE_URLS
               value: "http://+:5001"
 
-          # Mount writable key directory
+          # Mount persistent IdentityServer signing certificate
           volumeMounts:
-            - name: idp-keys
-              mountPath: /app/keys
+            - name: signing-certs
+              mountPath: /certs
+              readOnly: true
 
           # ========================================
           # STARTUP PROBE
@@ -86,7 +87,7 @@ spec:
 
       # Pod-level volumes (NOT inside container)
       volumes:
-        - name: idp-keys
+        - name: signing-certs
           hostPath:
-            path: "/run/desktop/mnt/host/d/home.jonathan/Documents/Pluralsight/ASP.NET CORE Securing-oauth2-oidc-v2/04/demos/start/ImageGallery.IDP/keys"
+            path: "/run/desktop/mnt/host/d/home.jonathan/Documents/Pluralsight/ASP.NET CORE Securing-oauth2-oidc-v2/04/demos/start/certs"
             type: Directory      
