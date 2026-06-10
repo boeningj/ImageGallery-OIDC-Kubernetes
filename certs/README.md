@@ -1,6 +1,6 @@
 # Certificates Directory
 
-This directory contains local development certificates and related security artifacts used by the ImageGallery platform.
+This directory contains development certificates and related security artifacts used by the ImageGallery platform.
 
 ## Purpose
 
@@ -30,9 +30,15 @@ DO NOT commit:
 
 Only documentation, scripts, and templates should be committed.
 
-## Local Development
+## Local Development and Container Environments
 
-Each local development environment should generate its own IdentityServer signing certificate.
+Each development environment should generate its own IdentityServer signing certificate.
+
+The signing certificate is used consistently across:
+
+- local runtime execution
+- Docker container execution
+- future distributed/multi-replica environments
 
 This certificate is used by `ImageGallery.IDP` as the IdentityServer signing credential for:
 
@@ -90,11 +96,12 @@ The certificate file is intentionally excluded from source control via `.gitigno
 
 ## Future Evolution
 
-Future environments may load signing certificates from:
+Future production environments may evolve signing certificate loading to use:
 
-- Docker mounted volumes
 - Kubernetes Secrets
 - AWS Secrets Manager
+- Azure Key Vault
+- HashiCorp Vault
 - external secret providers
 
-while maintaining the same stable signing identity across all IDP replicas.
+while maintaining the same stable signing identity across all IDP replicas and environments.
