@@ -35,9 +35,6 @@ internal static class HostingExtensions
         }
 
         var signingCertPath = Path.Combine(builder.Environment.ContentRootPath, "..", signingCertRelativePath);
-        
-        Console.WriteLine($"Loading signing certificate from: {signingCertPath}");
-
         var signingCert = new X509Certificate2(signingCertPath, signingCertPassword);
 
         builder.Services.AddIdentityServer(options =>

@@ -17,6 +17,7 @@ services:
       - imagegallery-network
     volumes:
       - ./ImageGallery.IDP/keys:/app/keys
+      - ./certs:/certs:ro
       - ${USERPROFILE}/.aspnet/https:/https:ro
     environment:
       ASPNETCORE_Kestrel__Certificates__Default__Path: /https/imagegallery-idp.pfx      
