@@ -16,7 +16,10 @@ services:
     networks:
       - imagegallery-network
     volumes:
-      - ./ImageGallery.IDP/keys:/app/keys
+      # Legacy Duende automatic key management volume.
+      # No longer used because IdentityServer now loads
+      # an explicit persistent signing certificate from /certs.
+      #- ./ImageGallery.IDP/keys:/app/keys
       - ./certs:/certs:ro
       - ${USERPROFILE}/.aspnet/https:/https:ro
     environment:

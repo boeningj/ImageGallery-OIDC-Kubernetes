@@ -28,7 +28,7 @@ docker run -d --rm `
     --name imagegallery-idp `
     --network $networkName `
     --env-file .\env\docker.env `
-    -v ".\ImageGallery.IDP\keys:/app/keys" `
+    -v ".\certs:/certs" `
     -v "$env:USERPROFILE\.aspnet\https:/https" `
     -e ASPNETCORE_Kestrel__Certificates__Default__Path=/https/imagegallery-idp.pfx `
     imagegallery-idp
