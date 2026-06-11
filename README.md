@@ -47,6 +47,11 @@ Supported deployment environments include:
 - Claims-based and role-based authorization
 - Custom ASP.NET Core authorization handlers
 - Resource ownership enforcement
+- Persistent IdentityServer signing certificate management
+- Deterministic JWKS publication across distributed environments
+- Stable multi-replica IdentityServer signing identity
+- Kubernetes Secret-based signing certificate management
+- Rollout-safe authentication infrastructure
 
 ### Cloud & Infrastructure
 
@@ -59,6 +64,7 @@ Supported deployment environments include:
 - Amazon RDS for SQL Server
 - SQL Server
 - EF Core Migrations
+- Persistent distributed IdentityServer signing identity
 
 ### Application Features
 
@@ -115,6 +121,8 @@ ImageGallery.IDP/
 ImageGallery.Authorization/
 ImageGallery.Infrastructure/
 
+certs/
+
 infra/terraform/aws/
 
 k8s/local/
@@ -134,6 +142,7 @@ docker-compose.yaml
 | `ImageGallery.IDP/` | Duende IdentityServer OIDC/OAuth2 provider |
 | `ImageGallery.Authorization/` | Shared authorization policies and requirements |
 | `ImageGallery.Infrastructure/` | Shared infrastructure services including ASP.NET Core Data Protection persistence and infrastructure EF Core migrations |
+| `certs/` | Development signing certificate documentation and local signing certificate storage for distributed IdentityServer deployments
 | `infra/terraform/aws/` | AWS Terraform Infrastructure as Code |
 | `k8s/local/` | Local Kubernetes manifests |
 | `k8s/aws/` | AWS EKS Kubernetes manifests |
@@ -192,8 +201,12 @@ The platform demonstrates:
 - Reference token introspection
 - Resource-based authorization using custom ASP.NET Core authorization handlers
 - JWT access token validation (`at+jwt`)
+- Persistent distributed IdentityServer signing certificate management
+- Deterministic JWKS publication across distributed environments
 - HTTPS/TLS ingress configuration
 - Kubernetes Secret-based configuration management
+- Persistent distributed IdentityServer signing certificate management
+- Deterministic JWKS publication across distributed environments
 
 The API supports both OAuth2 reference tokens and self-contained JWT access tokens through environment-based configuration.
 
@@ -429,7 +442,7 @@ Key lessons learned included:
 - OAuth2 reference tokens require runtime token introspection and introduce different operational considerations compared to self-contained JWT access tokens.
 - Kubernetes ConfigMaps and Secrets greatly simplify environment-specific configuration management compared to local environment variable handling.
 - Migrating from container-local SQLite storage to Amazon RDS SQL Server highlighted the importance of shared durable persistence for Kubernetes workloads and multi-replica cloud-native deployments.
-- IdentityServer signing key persistence becomes critical in containerized and distributed environments to prevent token validation failures during redeployments.
+- Persistent IdentityServer signing identity becomes critical in containerized and distributed environments to prevent token validation failures during redeployments, pod restarts, horizontal scaling operations, and cluster recreation events. Stable signing identity management using mounted certificates and Kubernetes Secrets enables deterministic JWKS publication and rollout-safe authentication behavior across distributed environments.
 - Infrastructure as Code using Terraform improves repeatability and consistency for cloud infrastructure provisioning.
 - Cloud-native deployments require stronger observability and troubleshooting practices compared to traditional local development workflows.
 - Running applications successfully in Docker does not guarantee successful Kubernetes deployment due to differences in networking, ingress, configuration injection, and orchestration behavior.
@@ -438,14 +451,13 @@ Key lessons learned included:
 
 Potential future enhancements for the platform include:
 
-- Persisting Duende IdentityServer signing keys and operational data using durable shared storage instead of an in-memory configuration.
+- Migrating Kubernetes Secret-based signing certificate and application secret management to external secret providers such as AWS Secrets Manager, HashiCorp Vault, or Kubernetes CSI Secret Store drivers.
 - Implementing centralized logging and observability using tools such as CloudWatch, Prometheus, or Grafana.
 - Implementing automated container vulnerability scanning and image hardening practices.
-- Implementing shared ASP.NET Core Data Protection key storage using Redis or another distributed provider to support reliable multi-replica deployments for the MVC client and IdentityServer workloads.
+- Expanding ASP.NET Core Data Protection infrastructure to support dedicated distributed cache providers such as Redis for improved scalability and reduced database dependency.
 - Implementing GitHub Actions CI/CD pipelines for automated container builds, ECR publishing, and Kubernetes deployments.
 - Further expanding cloud-native automation workflows using Terraform, Kubernetes controllers, and GitHub Actions CI/CD pipelines.
 - Supporting horizontal pod autoscaling (HPA) for Kubernetes workloads.
-- Implementing external secret management solutions such as AWS Secrets Manager or HashiCorp Vault.
 
 ## Author
 

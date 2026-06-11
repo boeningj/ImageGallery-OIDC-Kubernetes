@@ -39,14 +39,16 @@ The signing certificate is used consistently across:
 - local runtime execution
 - Docker container execution
 - Kubernetes execution
-- future distributed and multi-replica environments
+- distributed and multi-replica deployments
 
-This certificate is used by `ImageGallery.IDP` as the IdentityServer signing credential for:
+Environment-specific runtime infrastructure is responsible for securely loading and mounting the certificate into `ImageGallery.IDP`.
 
-- JWT signing
-- JWKS publication
-- stable cryptographic identity
-- distributed authentication consistency
+This allows the application to maintain a stable signing identity across:
+
+- pod restarts
+- deployment rollouts
+- container recreation
+- horizontal scaling scenarios
 
 ## Create Signing Certificate
 
@@ -97,27 +99,51 @@ The certificate file is intentionally excluded from source control via `.gitigno
 
 ## Current Architecture
 
-The `ImageGallery.IDP` service currently loads its IdentityServer signing certificate from:
+The `ImageGallery.IDP` service currently loads its IdentityServer signing certificate using environment-specific strategies:
 
-- local filesystem paths during local development
-- Docker-mounted volumes during containerized execution
-- Kubernetes-mounted volumes during local Kubernetes execution
+| Environment | Signing Certificate Strategy |
+|---|---|
+| Local Runtime | Local filesystem path |
+| Docker | Docker-mounted volume |
+| Local Kubernetes | Kubernetes-mounted host volume |
+| AWS / EKS | Kubernetes Secret mounted volume |
 
 This provides:
 
 - stable signing identity
 - deterministic JWKS publication
 - distributed authentication consistency
-- compatibility with multi-container and future multi-replica deployments
+- rollout-safe authentication behavior
+- pod restart safety
+- compatibility with distributed and multi-replica IdentityServer deployments
+
+## AWS / EKS Runtime Recovery
+
+The AWS runtime environment is ephemeral and may be destroyed and recreated by the Runtime Shutdown and Runtime Startup workflows.
+
+To preserve stable signing identity across cluster recreation:
+
+- the signing certificate is stored securely as a GitHub Actions secret
+- the certificate is reconstructed during runtime startup
+- a Kubernetes Secret is recreated automatically
+- the certificate is mounted into the `ImageGallery.IDP` pod at runtime
+
+This ensures stable JWT signing identity across:
+
+- EKS node replacement
+- cluster recreation
+- pod restarts
+- deployment rollouts
+- future horizontal scaling scenarios
 
 ## Future Evolution
 
 Future production environments may evolve signing certificate loading to use:
 
-- Kubernetes Secrets
 - AWS Secrets Manager
 - Azure Key Vault
 - HashiCorp Vault
 - external secret providers
+- Kubernetes CSI Secret Store drivers
 
 while maintaining the same stable signing identity across all IDP replicas and environments.
