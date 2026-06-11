@@ -201,8 +201,28 @@ jobs:
             --from-literal=Authentication__ClientSecret="${{ secrets.IMAGEGALLERY_CLIENT_SECRET }}" \
             --from-literal=Authentication__ApiClientSecret="${{ secrets.IMAGEGALLERY_API_CLIENT_SECRET }}" \
             --from-literal=ConnectionStrings__ImageGalleryDBConnectionString="${{ secrets.IMAGEGALLERY_CONNECTION_STRING }}" \
+            --from-literal=IdentityServer__SigningCertPath="/certs/imagegallery-signing.pfx" \
+            --from-literal=IdentityServer__SigningCertPassword="${{ secrets.IMAGEGALLERY_SIGNING_CERT_PASSWORD }}" \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Restore Signing Certificate
+        shell: bash
+        run: |
+          echo "${{ secrets.IMAGEGALLERY_SIGNING_CERT_BASE64 }}" | base64 -d > imagegallery-signing.pfx
+
+      - name: Create IdentityServer Signing Certificate Secret
+        shell: bash
+        run: |
+          kubectl create secret generic imagegallery-signing-cert \
+            --namespace imagegallery \
+            --from-file=imagegallery-signing.pfx=./imagegallery-signing.pfx \
             --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Deploy Application Workloads
         run: |
           kubectl apply -f k8s/aws
+
+      - name: Cleanup Signing Certificate
+        shell: bash
+        run: |
+          rm -f imagegallery-signing.pfx
