@@ -25,6 +25,7 @@ builder.Services.AddDbContext<GalleryContext>(options =>
 builder.Services.AddScoped<IGalleryRepository, GalleryRepository>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthorizationHandler, MustOwnImageHandler>();
+builder.Services.AddScoped<IImageStorageService, LocalFileImageStorageService>();
 
 // register AutoMapper-related services
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
