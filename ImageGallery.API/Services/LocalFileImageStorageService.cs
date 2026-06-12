@@ -11,6 +11,17 @@ namespace ImageGallery.API.Services
             _hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
         }
 
+        public Task<Stream> GetImageAsync(string fileName)
+        {
+            var webRootPath = _hostingEnvironment.WebRootPath;
+
+            var filePath = Path.Combine(webRootPath, "Images", fileName);
+
+            Stream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+
+            return Task.FromResult(stream);
+        }
+
         public async Task<string> SaveImageAsync(byte[] imageBytes)
         {
             var webRootPath = _hostingEnvironment.WebRootPath;

@@ -59,3 +59,8 @@ variable "aws_vpc_public_subnets" {
   description = "Public subnet CIDR blocks"
   type        = list(string)
 }
+
+variable "aws_s3_image_bucket" {
+  description = "S3 bucket used for ImageGallery runtime image storage"
+  type        = string
+}

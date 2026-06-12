@@ -34,6 +34,10 @@ spec:
           ports:
             - containerPort: 5075
 
+          volumeMounts:
+            - name: image-storage
+              mountPath: /app/wwwroot/Images
+
           envFrom:
             - configMapRef:
                 name: imagegallery-common-config
@@ -62,3 +66,9 @@ spec:
               port: 5075
             initialDelaySeconds: 15
             periodSeconds: 10
+
+      volumes:
+        - name: image-storage
+          hostPath:
+            path: "/run/desktop/mnt/host/d/home.jonathan/Documents/Pluralsight/ASP.NET CORE Securing-oauth2-oidc-v2/04/demos/start/images"
+            type: Directory

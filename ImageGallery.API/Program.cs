@@ -8,6 +8,8 @@ using ImageGallery.API.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Amazon;
+using Amazon.S3;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +27,24 @@ builder.Services.AddDbContext<GalleryContext>(options =>
 builder.Services.AddScoped<IGalleryRepository, GalleryRepository>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthorizationHandler, MustOwnImageHandler>();
-builder.Services.AddScoped<IImageStorageService, LocalFileImageStorageService>();
+
+var storageProvider = builder.Configuration["Storage:Provider"] ?? throw new InvalidOperationException("Storage:Provider configuration is missing.");
+
+if (string.Equals(storageProvider, "S3", StringComparison.OrdinalIgnoreCase))
+{
+    var awsRegion = builder.Configuration["AWS:Region"] ?? throw new InvalidOperationException("AWS:Region configuration is missing.");
+
+    builder.Services.AddSingleton<IAmazonS3>(_ => new AmazonS3Client(RegionEndpoint.GetBySystemName(awsRegion)));
+    builder.Services.AddScoped<IImageStorageService, S3ImageStorageService>();
+}
+else if (string.Equals(storageProvider, "Local", StringComparison.OrdinalIgnoreCase))
+{
+    builder.Services.AddScoped<IImageStorageService, LocalFileImageStorageService>();
+}
+else
+{
+    throw new InvalidOperationException($"Unsupported storage provider: '{storageProvider}'.");
+}
 
 // register AutoMapper-related services
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

@@ -193,5 +193,21 @@ namespace ImageGallery.API.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("{id}/file")]
+        [MustOwnImage]
+        public async Task<IActionResult> GetImageFile(Guid id)
+        {
+            var imageFromRepo = await _galleryRepository.GetImageAsync(id);
+
+            if (imageFromRepo == null)
+            {
+                return NotFound();
+            }
+
+            var imageStream = await _imageStorageService.GetImageAsync(imageFromRepo.FileName);
+
+            return File(imageStream, "image/jpeg");
+        }
     }
 }
