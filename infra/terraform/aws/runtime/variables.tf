@@ -53,3 +53,18 @@ variable "github_actions_role_arn" {
   description = "GitHub Actions IAM role ARN"
   type        = string
 }
+
+variable "aws_s3_image_bucket" {
+  description = "S3 bucket used for ImageGallery runtime image storage"
+  type        = string
+}
+
+variable "image_storage_policy_name" {
+  description = "IAM policy name for ImageGallery S3 image storage access"
+  type        = string
+}
+
+variable "image_storage_role_name" {
+  description = "IAM role name for ImageGallery API IRSA image storage access"
+  type        = string
+}

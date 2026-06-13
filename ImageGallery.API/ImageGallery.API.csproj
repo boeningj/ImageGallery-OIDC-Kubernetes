@@ -24,6 +24,7 @@
 		</PackageReference>
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="8.0.1" />
     <PackageReference Include="AWSSDK.S3" Version="3.7.414" />
+    <PackageReference Include="AWSSDK.SecurityToken" Version="3.7.414" />
   </ItemGroup>
 
   <ItemGroup>
