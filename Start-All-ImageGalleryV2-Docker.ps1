@@ -51,6 +51,7 @@ docker run -d --rm `
     --name imagegallery-api `
     --network $networkName `
     --env-file .\env\docker.env `
+    -v "$PWD/images:/app/wwwroot/Images" `
     -p 7075:5075 `
     imagegallery-api
 

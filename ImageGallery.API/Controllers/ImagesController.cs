@@ -12,15 +12,15 @@ namespace ImageGallery.API.Controllers
     [Authorize]
     public class ImagesController : ControllerBase
     {
-        private readonly IGalleryRepository _galleryRepository;
-        private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly IGalleryRepository _galleryRepository;        
         private readonly IMapper _mapper;
+        private readonly IImageStorageService _imageStorageService;
 
-        public ImagesController(IGalleryRepository galleryRepository, IWebHostEnvironment hostingEnvironment, IMapper mapper)
+        public ImagesController(IGalleryRepository galleryRepository, IMapper mapper, IImageStorageService imageStorageService)
         {
-            _galleryRepository = galleryRepository ?? throw new ArgumentNullException(nameof(galleryRepository));
-            _hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
+            _galleryRepository = galleryRepository ?? throw new ArgumentNullException(nameof(galleryRepository));            
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _imageStorageService = imageStorageService ?? throw new ArgumentNullException(nameof(imageStorageService));
         }
 
         [HttpGet()]
@@ -71,6 +71,7 @@ namespace ImageGallery.API.Controllers
             // Create an image from the passed-in bytes (Base64), and 
             // set the filename on the image
 
+            /*
             // get this environment's web root path (the path
             // from which static content, like an image, is served)
             var webRootPath = _hostingEnvironment.WebRootPath;
@@ -93,10 +94,11 @@ namespace ImageGallery.API.Controllers
 
             // fill out the filename
             imageEntity.FileName = fileName;
+            */
 
-            // ownerId should be set - can't save image in starter solution, will
-            // be fixed during the course
-            //imageEntity.OwnerId = ...;
+            var fileName = await _imageStorageService.SaveImageAsync(imageForCreation.Bytes);
+
+            imageEntity.FileName = fileName;            
 
             // set the ownerId on the imageEntity
             var ownerId = User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
@@ -106,16 +108,35 @@ namespace ImageGallery.API.Controllers
             }
             imageEntity.OwnerId = ownerId;
 
-            // add and save.  
-            _galleryRepository.AddImage(imageEntity);
-
-            await _galleryRepository.SaveChangesAsync();
+            try
+            {
+                // Add and save.  
+                _galleryRepository.AddImage(imageEntity);
+                await _galleryRepository.SaveChangesAsync();
+            }
+            catch
+            {
+                try
+                {
+                    // Compensation:
+                    // DB save failed after binary save succeeded.
+                    // Attempt to remove the uploaded file so we don't leave orphaned files behind.
+                    // NOTE:
+                    // This nested try/catch intentionally preserves the ORIGINAL
+                    // database exception. If compensation cleanup also fails, we do
+                    // not want the cleanup exception to mask the primary failure cause.
+                    await _imageStorageService.DeleteImageAsync(fileName);
+                }
+                catch
+                {
+                    // Optional:  Log compensation failure later
+                }
+                throw;
+            }
 
             var imageToReturn = _mapper.Map<Image>(imageEntity);
 
-            return CreatedAtRoute("GetImage",
-                new { id = imageToReturn.Id },
-                imageToReturn);
+            return CreatedAtRoute("GetImage", new { id = imageToReturn.Id }, imageToReturn);
         }
 
         [HttpDelete("{id}")]
@@ -129,9 +150,26 @@ namespace ImageGallery.API.Controllers
                 return NotFound();
             }
 
-            _galleryRepository.DeleteImage(imageFromRepo);
-
-            await _galleryRepository.SaveChangesAsync();
+            try
+            {
+                // Delete the physical binary file first.
+                //
+                // IMPORTANT:
+                // We intentionally remove the binary image file before deleting the
+                // database metadata so we don't end up with orphaned files
+                // or objects in storage.
+                //
+                // If binary deletion fails, we abort the operation and keep
+                // the DB row intact so the system remains internally consistent.
+                await _imageStorageService.DeleteImageAsync(imageFromRepo.FileName);
+                _galleryRepository.DeleteImage(imageFromRepo);
+                await _galleryRepository.SaveChangesAsync();
+            }
+            catch
+            {
+                // Optional future improvement:  Add structured logging here.
+                throw;
+            }
 
             return NoContent();
         }
@@ -154,6 +192,22 @@ namespace ImageGallery.API.Controllers
             await _galleryRepository.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpGet("{id}/file")]
+        [MustOwnImage]
+        public async Task<IActionResult> GetImageFile(Guid id)
+        {
+            var imageFromRepo = await _galleryRepository.GetImageAsync(id);
+
+            if (imageFromRepo == null)
+            {
+                return NotFound();
+            }
+
+            var imageStream = await _imageStorageService.GetImageAsync(imageFromRepo.FileName);
+
+            return File(imageStream, "image/jpeg");
         }
     }
 }

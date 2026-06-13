@@ -5,6 +5,7 @@ db_instance_class = "db.t3.micro"
 db_allocated_storage = 20
 aws_region = "us-east-2"
 aws_s3_bucket = "imagegallery-terraform-state"
+aws_s3_image_bucket = "imagegallery-dev-images"
 aws_vpc_cidr = "10.0.0.0/16"
 aws_vpc_azs = [
   "us-east-2a",

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sa-imagegallery-api
+  namespace: imagegallery
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::323146836950:role/imagegallery-dev-image-storage-role

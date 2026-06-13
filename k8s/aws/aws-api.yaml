@@ -27,6 +27,7 @@ spec:
       labels:
         app: imagegallery-api
     spec:
+      serviceAccountName: sa-imagegallery-api
       containers:
         - name: imagegallery-api
           image: 323146836950.dkr.ecr.us-east-2.amazonaws.com/imagegallery-api:1.0

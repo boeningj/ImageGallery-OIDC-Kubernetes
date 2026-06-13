@@ -9,3 +9,6 @@ eks_node_desired_size = 1
 eks_node_min_size     = 1
 eks_node_max_size     = 2
 github_actions_role_arn = "arn:aws:iam::323146836950:role/ImageGallery-GitHubActions-Dev"
+aws_s3_image_bucket = "imagegallery-dev-images"
+image_storage_policy_name = "imagegallery-dev-image-storage-policy"
+image_storage_role_name = "imagegallery-dev-image-storage-role"

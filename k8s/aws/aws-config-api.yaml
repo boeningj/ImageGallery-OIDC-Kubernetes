@@ -10,6 +10,13 @@ data:
   TokenSettings__Mode: Reference
 
   # ========================================
+  # IMAGE STORAGE
+  # ========================================
+  Storage__Provider: S3
+  AWS__Region: us-east-2
+  AWS__S3ImageBucket: imagegallery-dev-images
+
+  # ========================================
   # INTERNAL IDENTITY (API → IDP)
   # ========================================
   InternalIdentity__Authority: http://svc-imagegallery-idp:5001/idp

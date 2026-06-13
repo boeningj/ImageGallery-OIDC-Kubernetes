@@ -10,7 +10,9 @@
        <div class="pull-left col-md-4">            
             <div>
                 @* <img class="thumbnailImage" src="@("https://localhost:7075/images/" + item.FileName)" /> *@
-                <img class="thumbnailImage" src="@($"{ViewBag.ImageGalleryPublicRoot}/Images/{item.FileName}")" />
+                @* <img class="thumbnailImage" src="@($"{ViewBag.ImageGalleryPublicRoot}/Images/{item.FileName}")" /> *@
+                @* <img class="thumbnailImage" src="@($"{ViewBag.ImageGalleryPublicRoot}/api/images/{item.Id}/file")" /> *@
+                <img class="thumbnailImage" src="@Url.Action("GetImageFile", "Gallery", new { id = item.Id })" />
             </div>
             <div>
                 <div class="h6 topMarginSmall">@item.Title</div>
