@@ -49,6 +49,24 @@ namespace ImageGallery.Client.Controllers
             }
         }
 
+        public async Task<IActionResult> GetImageFile(Guid id)
+        {
+            var httpClient = _httpClientFactory.CreateClient("APIClient");
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/api/images/{id}/file");
+
+            var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return StatusCode((int)response.StatusCode);
+            }
+
+            var stream = await response.Content.ReadAsStreamAsync();
+
+            return File(stream, "image/jpeg");
+        }
+
         public async Task<IActionResult> EditImage(Guid id)
         {
 
