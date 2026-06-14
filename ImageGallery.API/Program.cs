@@ -10,6 +10,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Amazon;
 using Amazon.S3;
+using ImageGallery.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -181,6 +182,8 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+
+app.UseMiddleware<PodMetadataMiddleware>();
 
 app.UseAuthentication();
 

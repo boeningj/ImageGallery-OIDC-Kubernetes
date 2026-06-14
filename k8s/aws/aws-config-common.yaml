@@ -8,6 +8,7 @@ data:
   # ENVIRONMENT
   # ========================================
   ASPNETCORE_ENVIRONMENT: Docker
+  Runtime__Platform: Kubernetes
   TRUST_FORWARD_HEADERS: "true"
 
   # ========================================

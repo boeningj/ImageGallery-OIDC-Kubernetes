@@ -38,6 +38,12 @@ spec:
             - name: image-storage
               mountPath: /app/wwwroot/Images
 
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+
           envFrom:
             - configMapRef:
                 name: imagegallery-common-config
