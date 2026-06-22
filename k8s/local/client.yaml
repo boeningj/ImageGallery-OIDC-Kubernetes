@@ -38,6 +38,12 @@ spec:
           ports:
             - containerPort: 7184
 
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+
           envFrom:
             - configMapRef:
                 name: imagegallery-common-config

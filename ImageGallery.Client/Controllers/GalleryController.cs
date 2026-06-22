@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.Text;
 using System.Text.Json;
+using ImageGallery.Client.Services;
 
 namespace ImageGallery.Client.Controllers
 {
@@ -16,13 +17,16 @@ namespace ImageGallery.Client.Controllers
         private readonly ILogger<GalleryController> _logger;
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _environment;
+        private readonly IRuntimeMetadataService _runtimeMetadataService;
 
-        public GalleryController(IHttpClientFactory httpClientFactory, ILogger<GalleryController> logger, IConfiguration configuration, IWebHostEnvironment environment)
+        public GalleryController(IHttpClientFactory httpClientFactory, ILogger<GalleryController> logger, IConfiguration configuration,
+            IWebHostEnvironment environment, IRuntimeMetadataService runtimeMetadataService)
         {
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _configuration = configuration;
             _environment = environment;
+            _runtimeMetadataService = runtimeMetadataService ?? throw new ArgumentNullException(nameof(runtimeMetadataService));
         }
 
         public async Task<IActionResult> Index()
@@ -39,6 +43,7 @@ namespace ImageGallery.Client.Controllers
             var request = new HttpRequestMessage(HttpMethod.Get, "/api/images/");
 
             var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+            UpdateApiPodMetadata(response);
 
             response.EnsureSuccessStatusCode();
 
@@ -56,6 +61,7 @@ namespace ImageGallery.Client.Controllers
             var request = new HttpRequestMessage(HttpMethod.Get, $"/api/images/{id}/file");
 
             var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            UpdateApiPodMetadata(response);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -75,6 +81,7 @@ namespace ImageGallery.Client.Controllers
             var request = new HttpRequestMessage(HttpMethod.Get, $"/api/images/{id}");
 
             var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+            UpdateApiPodMetadata(response);
 
             response.EnsureSuccessStatusCode();
 
@@ -120,6 +127,7 @@ namespace ImageGallery.Client.Controllers
             };
 
             var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            UpdateApiPodMetadata(response);
 
             response.EnsureSuccessStatusCode();
 
@@ -133,6 +141,7 @@ namespace ImageGallery.Client.Controllers
             var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/images/{id}");
 
             var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            UpdateApiPodMetadata(response);
 
             response.EnsureSuccessStatusCode();
 
@@ -185,6 +194,7 @@ namespace ImageGallery.Client.Controllers
             };
 
             var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+            UpdateApiPodMetadata(response);
 
             response.EnsureSuccessStatusCode();
 
@@ -212,6 +222,14 @@ namespace ImageGallery.Client.Controllers
             _logger.LogInformation($"Identity token & user claims: " + $"\n{identityToken} \n{userClaimsStringBuilder}");
             _logger.LogInformation($"Access token: " + $"\n{accessToken}");
             _logger.LogInformation($"Refresh token: " + $"\n{refreshToken}");
+        }
+
+        private void UpdateApiPodMetadata(HttpResponseMessage response)
+        {
+            if (response.Headers.TryGetValues("X-Pod-Name", out var values))
+            {
+                _runtimeMetadataService.ApiPodName = values.FirstOrDefault();
+            }
         }
     }
 }

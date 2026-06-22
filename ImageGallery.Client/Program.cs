@@ -7,6 +7,7 @@ using Microsoft.Net.Http.Headers;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Net;
 using ImageGallery.Infrastructure.Extensions;
+using ImageGallery.Client.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,7 @@ if (missing.Any())
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(configure => 
         configure.JsonSerializerOptions.PropertyNamingPolicy = null);
+builder.Services.AddScoped<IRuntimeMetadataService, RuntimeMetadataService>();
     
 builder.Services.AddImageGalleryDataProtection(builder.Configuration);
 

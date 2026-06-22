@@ -1,5 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Authorization
+@using ImageGallery.Client.Services
 @inject IAuthorizationService AuthorizationService
+@inject IRuntimeMetadataService RuntimeMetadata
 
 <!DOCTYPE html>
 <html lang="en">
@@ -59,6 +61,24 @@
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; Image Gallery
+
+            @if (RuntimeMetadata.IsKubernetes)
+            {
+                <div class="mt-1 small">
+                    <div>
+                        Client Pod:
+                        <strong>@RuntimeMetadata.ClientPodName</strong>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(RuntimeMetadata.ApiPodName))
+                    {
+                        <div>
+                            API Pod:
+                            <strong>@RuntimeMetadata.ApiPodName</strong>
+                        </div>
+                    }
+                </div>
+            }
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
