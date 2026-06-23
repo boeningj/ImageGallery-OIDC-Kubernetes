@@ -163,23 +163,26 @@ module "eks" {
       # - Force a known-compatible AMI type for the node group.
       #
       # CURRENT CHOICE:
-      # - AL2_x86_64 (Amazon Linux 2)
-      #   Stable and widely supported
-      #   Compatible with EKS 1.29
+      # - AL2023_x86_64_STANDARD (Amazon Linux 2023)
       #
-      # PRODUCTION CONSIDERATIONS:
-      # - Consider upgrading to:
-      #     AL2023_x86_64
-      #   for newer OS support and security improvements.
+      # WHY:
+      # - Required for newer EKS versions.
+      # - Amazon Linux 2 (AL2_x86_64) is only supported for
+      #   Kubernetes 1.32 and earlier.
+      # - EKS 1.34 node groups will fail to create when using
+      #   AL2_x86_64.
       #
-      # - Alternatively, use custom AMIs or Bottlerocket for:
-      #     hardened security
-      #     reduced attack surface
+      # BENEFITS:
+      # - Newer operating system with longer support lifecycle.
+      # - Improved security posture.
+      # - Recommended by AWS for current EKS releases.
       #
       # IMPORTANT:
-      # - Changing AMI type will recreate the node group.
+      # - Changing AMI type recreates the managed node group.
+      # - Verify compatibility with workloads and add-ons
+      #   before changing in production environments.
       # ============================================================
-      ami_type = "AL2_x86_64"
+      ami_type = "AL2023_x86_64_STANDARD"
 
       min_size     = var.eks_node_min_size
       max_size     = var.eks_node_max_size
