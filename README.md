@@ -72,6 +72,7 @@ Supported deployment environments include:
 - Protected ASP.NET Core Web API
 - Persistent image metadata storage using Amazon RDS SQL Server
 
+<!--
 ## Live Demo
 
 The ImageGallery MVC client application is publicly hosted on AWS EKS and can be accessed here:
@@ -79,6 +80,30 @@ The ImageGallery MVC client application is publicly hosted on AWS EKS and can be
 🔗 **Live Application:** https://imagegallery.boeninglabs.net/
 
 > ⚠️ Note: The environment may occasionally be offline during infrastructure maintenance, redeployment, or cost optimization activities.
+-->
+
+## Deployment Status
+
+The ImageGallery platform has been successfully deployed to AWS EKS and validated in a production-style cloud environment.
+
+The public environment is currently offline while cloud infrastructure costs and runtime configuration are being reviewed and optimized for sustainable on-demand operation.
+
+The deployed architecture has been validated with:
+
+- Amazon EKS running Kubernetes workloads on Amazon Linux 2023 nodes
+- Amazon RDS for SQL Server
+- Amazon S3 persistent image storage
+- Amazon ECR container image hosting
+- Application Load Balancer ingress with ACM-managed TLS
+- Cloudflare DNS and ExternalDNS integration
+- OAuth 2.0 and OpenID Connect authentication with Duende IdentityServer
+- Persistent IdentityServer signing credentials and ASP.NET Core Data Protection keys
+- Multi-replica API deployment with Kubernetes load balancing
+- Terraform-managed AWS foundation and runtime infrastructure
+- GitHub Actions workflows for controlled AWS runtime startup and shutdown
+- Separation of persistent foundation infrastructure from disposable runtime infrastructure
+
+The AWS runtime is designed to be started and stopped on demand for cost control. GitHub Actions workflows provide controlled runtime startup and shutdown, allowing the EKS-based application environment to be recreated when needed while persistent foundation resources remain available.
 
 ### Test Users
 
@@ -368,7 +393,7 @@ Additional Kubernetes architecture, manifest organization, and configuration det
 
 ## AWS EKS Deployment
 
-The platform is publicly hosted on Amazon Web Services (AWS) using Amazon Elastic Kubernetes Service (EKS).
+The platform has been successfully deployed to Amazon Web Services (AWS) using Amazon Elastic Kubernetes Service (EKS).
 
 The AWS deployment demonstrates a production-style cloud-native architecture including:
 
