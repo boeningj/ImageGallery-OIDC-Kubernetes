@@ -1,7 +1,7 @@
 #project_name = "imagegallery"
 environment = "dev"
 db_username = "imagegalleryadm"
-db_instance_class = "db.t3.micro"
+db_instance_class = "db.t3.small"
 db_allocated_storage = 20
 aws_region = "us-east-2"
 aws_s3_bucket = "imagegallery-terraform-state"

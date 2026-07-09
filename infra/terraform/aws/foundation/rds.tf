@@ -73,9 +73,15 @@ resource "aws_security_group" "imagegallery_rds_sg" {
 # - SQL Server Express Edition
 #   Lowest-cost managed SQL Server option.
 #
-# - db.t3.micro
-#   Smallest practical compute size for this low-traffic
-#   portfolio application.
+# - db.t3.small
+#   Selected for this low-traffic portfolio application after
+#   db.t3.micro exhibited sustained CPU utilization and incurred
+#   significant surplus CPU credit charges even under minimal
+#   database workload.
+#
+#   The larger instance class provides sufficient baseline CPU
+#   capacity to avoid the surplus credit charges observed with
+#   db.t3.micro.
 #
 # - Single AZ
 #   Minimizes cost for dev/test usage.
@@ -124,7 +130,7 @@ resource "aws_db_instance" "imagegallery_sqlserver" {
   skip_final_snapshot     = true
   deletion_protection     = false
 
-  performance_insights_enabled = false
+  performance_insights_enabled = true
 
   db_subnet_group_name = aws_db_subnet_group.imagegallery_db_subnet_group.name
 
